@@ -23,8 +23,8 @@
 ### Once run this app you can able to see Login screen,click on Sign up link
 ### Do sign up and sign in
 ### once successfully login you can able to see there are 3 tabs 
-#### On All blogs you can see others blog
-#### On My Blogs you can see your blogs,if no blogs are there you can add ,simply click on + button
-#### On My Profile you can see your profile,where you can Update your profile pictre/name/company/password
+### On All blogs you can see others blog
+### On My Blogs you can see your blogs,if no blogs are there you can add ,simply click on + button
+### On My Profile you can see your profile,where you can Update your profile pictre/name/company/password
 ### On All Blogs you can like the blog simply click on Like button and if you want to post comment on that blog you can go ahead
-#### On My Blogs you can able to see your all blogs,Likes and comments for that blog. if you want to edit/delete your blog from there
+### On My Blogs you can able to see your all blogs,Likes and comments for that blog. if you want to edit/delete your blog from there
