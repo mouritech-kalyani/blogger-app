@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:bloggers/pages/dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 
@@ -147,22 +148,24 @@ class _SignInState extends State<SignIn> {
           "password":password,
 
         })
-    ).then((result) => {
+    ).then((result) =>{
     print('Log in is ${result.body}'),
     if(result.body != 'false') {
       setState((){
         currentUser=jsonDecode(result.body);
       }),
     currentUser.forEach((e) => {
-    setState((){
+    setState(()  {
     userId=e["userId"];
     username=e["username"];
     password=e["password"];
+     print("data after login on login is $userId,$username,$password");
     })
     }),
+      setUserSession(),
     Navigator.pushAndRemoveUntil(
     context, MaterialPageRoute(
-    builder: (context) => Dashboard(userId:userId,username:username,password:password)),
+    builder: (context) => Dashboard()),
     ModalRoute.withName("/dashboard")
     )
     }
@@ -176,4 +179,10 @@ class _SignInState extends State<SignIn> {
     });
 
   }
+  setUserSession()async{
+  var session = FlutterSession();
+  await session.set("userId", userId);
+
+  }
+
 }

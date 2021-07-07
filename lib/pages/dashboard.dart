@@ -3,12 +3,10 @@ import 'package:bloggers/pages/profile.dart';
 import 'package:flutter/material.dart';
 import 'allblogs.dart';
 import 'myblogs.dart';
+import 'package:flutter_session/flutter_session.dart';
 
 class Dashboard extends StatefulWidget {
-  final userId;
-  final username;
-  final password;
-  Dashboard({required this.userId,this.password,this.username});
+  Dashboard();
 
   @override
   _DashboardState createState() => _DashboardState();
@@ -16,24 +14,8 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   List allBlogs=[];
-  int userId=0;
-  String username="";
-  String password="";
+  // dynamic sessionUid;
   bool isLoading=true;
- @override
-  void initState() {
-   getUserId();
-    super.initState();
-  }
-  getUserId(){
-   setState(() {
-    userId=widget.userId;
-    username=widget.username;
-    password=widget.password;
-   });
-
-   print("uid  dash is $userId");
-  }
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -59,8 +41,8 @@ class _DashboardState extends State<Dashboard> {
         body: TabBarView(
           children: <Widget>[
             AllBlogs(),
-            MyBlogs(userId=userId,username=username,password=password),
-            MyProfile(userId=userId,username=username,password=password)
+            MyBlogs(),
+            MyProfile()
           ],
         ),
       ),

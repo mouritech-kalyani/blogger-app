@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:bloggers/pages/addblog.dart';
 import 'package:bloggers/pages/dashboard.dart';
 import 'package:bloggers/pages/profile.dart';
@@ -12,7 +13,7 @@ void main() {
     routes: {
       '/signup':(context)=>SignUp(),
       '/signin':(context)=>SignIn(),
-      '/dashboard':(context)=>Dashboard(userId: 0),
+      '/dashboard':(context)=>Dashboard(),
     },
   ));
 }

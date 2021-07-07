@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
+
+import 'AddComments.dart';
+import 'dashboard.dart';
 class AllBlogs extends StatefulWidget {
   const AllBlogs({Key? key}) : super(key: key);
 
@@ -14,7 +17,7 @@ class _AllBlogsState extends State<AllBlogs> {
   List allBlogs=[];
   bool isLoading=true;
   var likes;
-  bool isLike=false;
+  bool isBlogLike=false;
   @override
   void initState() {
     getWholeBlogs();
@@ -36,10 +39,6 @@ class _AllBlogsState extends State<AllBlogs> {
       allBlogs=allBlogs;
       isLoading=false;
     });
-    // allBlogs.forEach((element) {
-    //   print("blog name is ${element["description"]}");
-    //   print("blog time is ${element["blogTime"]}");
-    // });
   }
   @override
   Widget build(BuildContext context) {
@@ -50,21 +49,25 @@ class _AllBlogsState extends State<AllBlogs> {
       ),
           body: SingleChildScrollView(
             child: Container(
-                child: isLoading ? Center(
-                  child: SpinKitRotatingCircle(color: Colors.blueAccent[400],size: 70.0,),
+                child: isLoading ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                   SpinKitRotatingCircle(color: Colors.blueAccent[400],size: 70.0,),
+                  ],
                 ) :
                 Container(
                   margin: const EdgeInsets.all(10.0),
 
                   child: ListView.builder(
                       primary: false,
+                      reverse: true,
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: allBlogs.length,
                       itemBuilder: (BuildContext context, int index){
                         return Card(
                           child: Padding(
-                            padding: const EdgeInsets.all(15.0),
+                            padding: const EdgeInsets.fromLTRB(10,10,10,10),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
@@ -83,22 +86,21 @@ class _AllBlogsState extends State<AllBlogs> {
                                 SizedBox(height:20),
                                 Row(
                                    children:<Widget>[
-                                     Expanded(flex:2,child: Text(allBlogs[index]["description"],style: TextStyle(fontSize: 20))),
+                                     Flexible(child: Text(allBlogs[index]["description"],style: TextStyle(fontSize: 20),overflow: TextOverflow.ellipsis,maxLines: 10,)),
                                   ]
                                 ),
-                                SizedBox(height:5),
+                                SizedBox(height:10),
+                                // Divider( color: Colors.grey[800],),
                                 Row(
                                     children:<Widget>[
-                                      Expanded(flex:2,child: Text(likes=allBlogs[index]["likes"].toString(),style: TextStyle(fontSize: 15))),
-                                      isLike?
-                                      IconButton(icon: Icon(Icons.thumb_up_alt_outlined,size: 20,color: Colors.blue,), onPressed: () {
-                                        likeFunction(index);
-                                      },)
-                                          :IconButton(icon: Icon(Icons.thumb_up_alt_outlined,size: 20,), onPressed: () {
-                                        likeFunction(index);
-                                         },)
-
-                                    ]
+                                     Text(allBlogs[index]["likes"].toString() ,style: TextStyle(fontSize: 15)),
+                                      IconButton(icon: Icon(Icons.favorite,size: 30,color: Colors.red,), onPressed: () {
+                                        blogLikeFunction(allBlogs[index]["likes"],allBlogs[index]["description"],allBlogs[index]["blogId"],allBlogs[index]["user"]["userId"],allBlogs[index]["blogTime"]);
+                                      },),
+                                      SizedBox(width: 120,),
+                                      Text('Comments'),
+                                      IconButton(icon: Icon(Icons.comment,size: 30,), onPressed: () { showComments(allBlogs[index]["blogId"]); },)
+                                      ]
                                 )
                               ]
                                 ),
@@ -114,10 +116,41 @@ class _AllBlogsState extends State<AllBlogs> {
 
     );
   }
-  likeFunction(index){
+  blogLikeFunction(likes,description,blogId,userId,blogTime)async{
+    print("previous like is $likes");
     setState(() {
-      isLike=true;
-      likes[index]= int.parse(likes)+1;
-    });print('Like count is $likes');
+      likes= likes+1;
+    });
+    print("after increment like is $likes");
+    print('clicked to like blog id,userid,desc,blog time and like is $blogId, $userId, $description,$blogTime, $likes');
+    await put(Uri.parse(
+        "https://blogger-mobile.herokuapp.com/blogs"),
+        headers: {
+        "content-type": "application/json",
+        "accept": "application/json",
+        },
+        body: jsonEncode({
+        "user": {
+        "userId": userId
+        },
+        "description": description,
+        "blogTime": blogTime,
+        "likes":likes,
+        "blogId":blogId
+        }
+    )
+    ).then((value) => {
+      print("data after like is ${value.body}"),
+      Navigator.pushAndRemoveUntil(
+          context, MaterialPageRoute(
+          builder: (context) => Dashboard()),
+          ModalRoute.withName("/dashboard")
+      )
+    });
+
+  }
+  showComments(id){
+    print('selected comment id is $id');
+    Navigator.push(context, MaterialPageRoute(builder: (context) => AddComments(blogId:id)));
   }
 }

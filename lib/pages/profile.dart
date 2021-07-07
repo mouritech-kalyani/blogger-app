@@ -3,15 +3,15 @@ import 'dart:io';
 import 'package:bloggers/pages/signin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'dashboard.dart';
 class MyProfile extends StatefulWidget {
-  final userId;
-  final username;
-  final password;
-  MyProfile(this.userId,this.username,this.password);
+  MyProfile();
 
   @override
   _MyProfileState createState() => _MyProfileState();
@@ -19,7 +19,7 @@ class MyProfile extends StatefulWidget {
 
 class _MyProfileState extends State<MyProfile> {
   var userId;
-  List currentUser=[];
+  var currentUser={};
   late String username='';
   late String fullName='';
   late String companyName='';
@@ -28,9 +28,10 @@ class _MyProfileState extends State<MyProfile> {
   late String companyNameEdit='';
   late String passwordEdit='';
   var profilePic;
-  bool isLoading=false;
+  bool isLoading=true;
   bool isEditable=false;
   bool _showPassword=false;
+  bool isProfileChange=false;
   String passwordError='';
   String formError = '';
   @override
@@ -39,40 +40,31 @@ class _MyProfileState extends State<MyProfile> {
     super.initState();
   }
   getProfile()async{
-      userId=widget.userId;
-      username=widget.username;
-      password=widget.password;
-
-   await post(Uri.parse(
-       "https://blogger-mobile.herokuapp.com/log-in"),
+    dynamic sessionUid= await FlutterSession().get("userId");
+    setState(() {
+      userId=sessionUid;
+    });
+   await get(Uri.parse(
+       "https://blogger-mobile.herokuapp.com/user-by-id/$userId"),
        headers: {
          "content-type": "application/json",
          "accept": "application/json",
-       },
-       body: jsonEncode({
-         "username": username,
-         "password":password,
-
-       })
-   ).then((value) => {
-     currentUser=jsonDecode(value.body),
-    print("res for profile page is ${value.body}"),
-
-    }).then((result) => {
-   print("current user array is $currentUser"),
-       currentUser.forEach((element) {
-
-           userId=element["userId"];
-           profilePic=element["profilePic"];
-           username=element["username"];
-           password=element["password"];
-           setState(() {
-             fullName=element["fullName"];
-             companyName=element["companyName"];
-           });
-      })
+       }
+   ).then((result) => {
+     print('Res of profile is ${result.body}'),
+     currentUser=jsonDecode(result.body),
+     print("current user is $currentUser"),
+     userId=currentUser['userId'],
+     username=currentUser['username'],
+     password=currentUser['password'],
+     fullName=currentUser['fullName'],
+     companyName=currentUser['companyName'],
+     profilePic=currentUser['profilePic'],
+   print("data after profile get call is $userId,$username,$profilePic,$password,$fullName,$companyName"),
+    setState((){
+      isLoading=false;
+    })
    });
-    print("firstname companyName is $fullName, $companyName");
   }
   @override
   Widget build(BuildContext context) {
@@ -91,7 +83,7 @@ class _MyProfileState extends State<MyProfile> {
           }, icon: Icon(Icons.logout),color: Colors.white),
         ],
       ),
-      body:fullName == '' ? SpinKitRotatingCircle(color: Colors.blueAccent[400],size: 70.0,) :SingleChildScrollView(
+      body:isLoading ? SpinKitRotatingCircle(color: Colors.blueAccent[400],size: 70.0,) :SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(2, 20, 2, 0),
           child: Padding(
@@ -118,7 +110,7 @@ class _MyProfileState extends State<MyProfile> {
               ],
             ),
             SizedBox(height: 10,),
-            Center(child: Text(formError,style: TextStyle(color: Colors.red,fontSize: 15),)),
+            Center(child: Text(formError,style: TextStyle(color: Colors.red,fontSize: 15,fontWeight: FontWeight.bold),)),
             SizedBox(height: 10,),
                 Table(
         // defaultColumnWidth: FixedColumnWidth(120.0),
@@ -207,8 +199,11 @@ class _MyProfileState extends State<MyProfile> {
                                   passwordError="Password must be 8 characters";
                                 });
                               }else{
-                                passwordEdit=e;
-                                passwordError='';
+                                setState(() {
+                                  passwordEdit=e;
+                                  passwordError='';
+                                });
+
                                 FocusScope.of(context).requestFocus(FocusNode());
                               }
                             });
@@ -286,59 +281,92 @@ class _MyProfileState extends State<MyProfile> {
     final PickedFile = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
     setState(() {
       profilePic=PickedFile!.path;
+      isProfileChange = true;
+      formError='';
     });
-    print('clicked profile img is $profilePic');
+    print('clicked profile img is $profilePic and pic flag is $isProfileChange');
   }
   saveDetails(BuildContext context) async{
     isLoading=true;
-    print("edited data is $fullNameEdit, $companyNameEdit, $passwordEdit, $profilePic");
-    if(fullNameEdit == "" && passwordEdit == "" && companyNameEdit == "" && profilePic== null){
-      formError="Please provide the data to update";
-    }
-    else{
-      fullNameEdit=fullName;
-      companyNameEdit=companyName;
-      passwordEdit=password;
-    print("data will go into db is $fullNameEdit, $passwordEdit,$profilePic,$companyNameEdit");
-      await put(Uri.parse(
-          "https://blogger-mobile.herokuapp.com/users"),
-          headers: {
-            "content-type": "application/json",
-            "accept": "application/json",
-          },
-          body: jsonEncode({
-            "userId": userId,
-            "fullName": fullNameEdit,
-            "username": username,
-            "password": passwordEdit,
-            "companyName": companyNameEdit,
-            "profilePic": profilePic
-          })
-      ).then((result) =>
-      {
-        print('Registration is ${result.body}'),
-        Fluttertoast.showToast(
-          msg: "Record Saved !",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-        )
+      print("before edited data is $fullName, $companyName, $password, $profilePic,$isProfileChange");
+      print('pic flag $isProfileChange');
+    if(fullNameEdit == '' && passwordEdit == '' && companyNameEdit == '' && isProfileChange == false){
+      setState(() {
+        // isEditable=false;
+        formError="Please provide the data to update";
+      });
+
+    }else {
+      setState(() {
+        formError='';
+      });
+        if(fullNameEdit == '' && companyNameEdit == '' && passwordEdit == ''){
+
+          setState(() {
+            fullNameEdit=fullName;
+            companyNameEdit=companyName;
+            passwordEdit=password;
+          });
+
       }
-      );
+      else if(fullNameEdit == '' && companyNameEdit == ''){
+          setState(() {
+            fullNameEdit=fullName;
+            companyNameEdit=companyName;
+          });
+      }
+      else if(companyNameEdit == '' && passwordEdit == ''){
+        setState(() {
+          companyNameEdit=companyName;
+          passwordEdit=password;
+        });
+      }
+        else if(fullNameEdit == '' && passwordEdit == ''){
+          setState(() {
+            fullNameEdit=fullName;
+            passwordEdit=password;
+          });
+        }
+
+
+      print(
+          "after editing is $fullNameEdit,$passwordEdit,$companyNameEdit,$profilePic");
+
+        await put(Uri.parse(
+            "https://blogger-mobile.herokuapp.com/users"),
+            headers: {
+              "content-type": "application/json",
+              "accept": "application/json",
+            },
+            body: jsonEncode({
+              "userId": userId,
+              "fullName": fullNameEdit,
+              "username": username,
+              "password": passwordEdit,
+              "companyName": companyNameEdit,
+              "profilePic": profilePic
+            })
+        ).then((result) =>
+        {
+          print('edited data is ${result.body}'),
+          Fluttertoast.showToast(
+            msg: "Record Saved !",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+          ).then((value) => {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) =>
+                Dashboard()))
+          })
+        }
+        );
+
+      setState(() {
+        isEditable=false;
+        _showPassword=!_showPassword;
+        isLoading=false;
+      });
     }
-    print("new values are $fullName,$companyName,$password,$profilePic,");
-    //   else{
-    //   Fluttertoast.showToast(
-    //     msg: "Please Edit the Record",
-    //     toastLength: Toast.LENGTH_SHORT,
-    //     gravity: ToastGravity.CENTER,
-    //     timeInSecForIosWeb: 1,
-    //   );
-    // }
-    setState(() {
-      isEditable=false;
-      _showPassword=!_showPassword;
-      isLoading=false;
-    });
-   }
+  }
 }

@@ -11,9 +11,8 @@ class AddBlog extends StatefulWidget {
   final userId;
   final blogId;
   final description;
-  final username;
-  final  password;
-  const AddBlog({this.userId,this.description,this.password,this.username,this.blogId});
+  final likes;
+  const AddBlog({this.userId,this.description,this.blogId,this.likes});
 
   @override
   _AddBlogState createState() => _AddBlogState();
@@ -24,10 +23,8 @@ class _AddBlogState extends State<AddBlog> {
   String blogError='';
   String blogTime='';
   String editDescription='';
-  String username='';
-  String password='';
   var blogId;
-  var likes=0;
+  var likes;
   var userId;
   bool isLoading=false;
   @override
@@ -36,10 +33,12 @@ class _AddBlogState extends State<AddBlog> {
       blogId=0;
       userId=widget.userId;
       editDescription='';
+      likes=0;
     }
     else{
       userId=widget.userId;
       blogId=widget.blogId;
+      likes=widget.likes;
       editDescription=widget.description;
     }
    print("user id,blog id,edit description ${userId} ${widget.blogId} ${widget.description}");
@@ -147,7 +146,8 @@ class _AddBlogState extends State<AddBlog> {
                   "userId": userId
                 },
                 "description": description,
-                "blogTime": blogTime
+                "blogTime": blogTime,
+                "likes":likes
               }
               )
           ).then((result) =>
@@ -161,7 +161,7 @@ class _AddBlogState extends State<AddBlog> {
             ).then((value) =>
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) =>
-                    Dashboard(userId: userId,username:username,password:password)))
+                    Dashboard()))
             )
           });
         }else{
@@ -198,7 +198,7 @@ class _AddBlogState extends State<AddBlog> {
             ).then((value) =>
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) =>
-                    Dashboard(userId: userId,username:username,password:password)))
+                    Dashboard()))
             )
           });
         }

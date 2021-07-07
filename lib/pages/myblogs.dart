@@ -1,17 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_session/flutter_session.dart';
+// import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 
+import 'AddComments.dart';
 import 'addblog.dart';
 import 'dashboard.dart';
 
 class MyBlogs extends StatefulWidget {
-  final userId;
-  final username;
-  final password;
-  MyBlogs(this.userId,this.username,this.password);
+  MyBlogs();
   @override
   _MyBlogsState createState() => _MyBlogsState();
 }
@@ -20,22 +20,20 @@ class _MyBlogsState extends State<MyBlogs> {
 List userBlogs=[];
 bool checkNoBlog=false;
 bool isLoading=true;
-String username="";
-String password="";
-var userId;
+var userIdFromSession;
+var likes;
 @override
   void initState() {
     getMyBlogs();
     super.initState();
   }
 getMyBlogs()async{
+  dynamic sessionUid= await FlutterSession().get("userId");
+  print("user is on my blogs is $sessionUid");
   setState(() {
-    userId=widget.userId;
-    username=widget.username;
-    password=widget.username;
+    userIdFromSession=sessionUid;
   });
-  print("user is on my blogs is $userId");
-  await get(Uri.parse("https://blogger-mobile.herokuapp.com/users/$userId"),
+  await get(Uri.parse("https://blogger-mobile.herokuapp.com/users/$sessionUid"),
       headers: {
       "content-type": "application/json",
       "accept": "application/json",
@@ -82,6 +80,7 @@ getMyBlogs()async{
 
             child: ListView.builder(
                 primary: false,
+                reverse: true,
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: userBlogs.length,
@@ -96,20 +95,25 @@ getMyBlogs()async{
                               children: <Widget>[
                                 Expanded(flex:4 , child: Text(userBlogs[index]["blogTime"].toString(),style: TextStyle(fontSize: 18))),
                                 SizedBox(width:20),
-                                Expanded(flex:1, child: IconButton(icon:Icon(Icons.edit), onPressed: () { editBlog(userBlogs[index]["blogId"],userBlogs[index]["description"]); })),
+                                Expanded(flex:1, child: IconButton(icon:Icon(Icons.edit), onPressed: () { editBlog(userBlogs[index]["blogId"],userBlogs[index]["description"],userBlogs[index]["likes"]); })),
                                 Expanded(flex:1,child: IconButton(icon:Icon(Icons.delete), onPressed: () { deleteBlog(userBlogs[index]["blogId"]); },),),
                               ],
                             ),
                             SizedBox(height:20),
                             Row(
                                 children:<Widget>[
-                                  Expanded(flex:2,child: Text(userBlogs[index]["description"],style: TextStyle(fontSize: 20))),
+                                  Flexible(child: Text(userBlogs[index]["description"],style: TextStyle(fontSize: 20),overflow: TextOverflow.ellipsis,maxLines: 10,)),
                                 ]
                             ),
                             SizedBox(height: 10,),
                             Row(
                                 children:<Widget>[
-                                  Expanded(flex:2,child: Text(userBlogs[index]["likes"],style: TextStyle(fontSize: 20))),
+                                  IconButton(onPressed: null, icon: Icon(Icons.favorite,color: Colors.red,size: 30,)),
+                                  Text('Likes  ',style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
+                                  Expanded(flex:2,child: Text(userBlogs[index]["likes"].toString(),style: TextStyle(fontSize: 20))),
+                                  Text('Comments'),
+                                  IconButton(icon: Icon(Icons.comment,size: 30,), onPressed: () { showComments(userBlogs[index]["blogId"]); },)
+
                                 ]
                             ),
                           ]
@@ -124,16 +128,16 @@ getMyBlogs()async{
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blueAccent,
             onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> AddBlog(userId:userId)));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> AddBlog(userId:userIdFromSession)));
             },
         child: Text("+",style: TextStyle(fontSize: 40),),
             )
             );
   }
-  editBlog(blogId,description){
+  editBlog(blogId,description,likes){
     print("blog edited $blogId, with descripton is $description");
 
-    Navigator.push(context, MaterialPageRoute(builder: (context) => AddBlog(userId:userId,description:description,blogId:blogId,username:username,password:password)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => AddBlog(userId:userIdFromSession,description:description,blogId:blogId,likes:likes)));
 
   }
   deleteBlog(blogId)async{
@@ -148,9 +152,13 @@ getMyBlogs()async{
       print(value.body),
     Navigator.pushAndRemoveUntil(
     context, MaterialPageRoute(
-    builder: (context) => Dashboard(userId:userId,username:username,password:password)),
+    builder: (context) => Dashboard()),
     ModalRoute.withName("/dashboard")
     )
     });
+  }
+  showComments(id){
+    print('selected comment id is $id');
+    Navigator.push(context, MaterialPageRoute(builder: (context) => AddComments(blogId:id)));
   }
 }
