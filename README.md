@@ -16,7 +16,7 @@
 #### flutter_session: ^0.1.1-nullsafety
 #### auto_size_text: ^2.1.0 
 
-### Once done with the set up you can simply run this app
+### Once done with the set up you can simply run this app using AVD Manager or Real Device
 
 # How to use this app
 
