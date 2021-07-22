@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
-
+import 'package:flutter_session/flutter_session.dart';
 import 'AddComments.dart';
 import 'dashboard.dart';
+
 class AllBlogs extends StatefulWidget {
   const AllBlogs({Key? key}) : super(key: key);
 
@@ -24,7 +25,8 @@ class _AllBlogsState extends State<AllBlogs> {
     super.initState();
   }
   getWholeBlogs()async{
-    await get(Uri.parse("https://blogger-mobile.herokuapp.com/blogs"),
+    dynamic sessionUid= await FlutterSession().get("userId");
+    await get(Uri.parse("https://blogger-mobile.herokuapp.com/blogs/$sessionUid"),
         headers: {
         "content-type": "application/json",
         "accept": "application/json",
@@ -47,17 +49,10 @@ class _AllBlogsState extends State<AllBlogs> {
         title: Text('All blogs'),
         backgroundColor: Colors.blueAccent,
       ),
-          body: SingleChildScrollView(
+          body: isLoading ?SpinKitFadingCircle(color: Colors.blueAccent[400],size: 70.0,)
+          :allBlogs.isEmpty ? Center(child:Text("Follow the bloggers to see blogs",style: TextStyle(fontSize: 20),)) :  SingleChildScrollView(
             child: Container(
-                child: isLoading ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                   SpinKitRotatingCircle(color: Colors.blueAccent[400],size: 70.0,),
-                  ],
-                ) :
-                Container(
                   margin: const EdgeInsets.all(10.0),
-
                   child: ListView.builder(
                       primary: false,
                       reverse: true,
@@ -112,7 +107,7 @@ class _AllBlogsState extends State<AllBlogs> {
 
                 )
             ),
-          ),
+
 
     );
   }

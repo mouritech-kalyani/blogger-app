@@ -1,6 +1,7 @@
 // @dart=2.9
 import 'package:bloggers/pages/addblog.dart';
 import 'package:bloggers/pages/dashboard.dart';
+import 'package:bloggers/pages/myblogs.dart';
 import 'package:bloggers/pages/profile.dart';
 import 'package:bloggers/pages/signin.dart';
 import 'package:bloggers/pages/signup.dart';
@@ -14,6 +15,7 @@ void main() {
       '/signup':(context)=>SignUp(),
       '/signin':(context)=>SignIn(),
       '/dashboard':(context)=>Dashboard(),
+      '/myblogs':(context)=> MyBlogs()
     },
   ));
 }

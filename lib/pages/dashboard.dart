@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bloggers/pages/people.dart';
 import 'package:bloggers/pages/profile.dart';
 import 'package:flutter/material.dart';
 import 'allblogs.dart';
@@ -29,7 +30,7 @@ class _DashboardState extends State<Dashboard> {
                 text: "All Blogs",
               ),
               Tab(
-                  text: "My Blogs",
+                  text: "People",
               ),
               Tab(
                 text: "My Profile",
@@ -41,7 +42,7 @@ class _DashboardState extends State<Dashboard> {
         body: TabBarView(
           children: <Widget>[
             AllBlogs(),
-            MyBlogs(),
+            People(),
             MyProfile()
           ],
         ),

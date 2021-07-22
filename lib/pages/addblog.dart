@@ -196,9 +196,11 @@ class _AddBlogState extends State<AddBlog> {
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,
             ).then((value) =>
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) =>
-                    Dashboard()))
+                Navigator.pushAndRemoveUntil(
+                    context, MaterialPageRoute(
+                    builder: (context) => MyBlogs()),
+                    ModalRoute.withName("/myblogs")
+                )
             )
           });
         }

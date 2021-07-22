@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
-// import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 
@@ -72,7 +71,7 @@ getMyBlogs()async{
         backgroundColor: Colors.blueAccent,
       ),
       body: Container(
-          child: isLoading ? SpinKitRotatingCircle(color: Colors.blueAccent[400],size: 70.0,):
+          child: isLoading ? SpinKitFadingCircle(color: Colors.blueAccent[400],size: 70.0,):
           checkNoBlog ? Center(child: Text("No Blogs Yet Please Add Your Blogs Here..",
             style:TextStyle(fontSize: 20) ,)) :
           Container(

@@ -70,9 +70,9 @@ class _AddCommentsState extends State<AddComments> {
       appBar: AppBar(
         title: Text('All Comments'),
       ),
-      body: SingleChildScrollView(
-        child: isLoading ? Center(child: SpinKitRotatingCircle(color: Colors.blueAccent[400],size: 70.0,)):
-        noComments ? Padding(
+      body: isLoading ? SpinKitFadingCircle(color: Colors.blueAccent[400],size: 70.0,):
+        noComments ? SingleChildScrollView(
+            child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 250, 10, 0),
           child: Column(
             children: [
@@ -105,7 +105,7 @@ class _AddCommentsState extends State<AddComments> {
 
             ],
           ),
-        ):
+        )):
          Column(
            children: [
              ListView.builder(
@@ -192,7 +192,7 @@ class _AddCommentsState extends State<AddComments> {
            ],
          ),
 
-    ),
+
     );
   }
   addCommentFunction(blogId,userId)async{
@@ -233,9 +233,11 @@ class _AddCommentsState extends State<AddComments> {
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,
             ).then((value) =>
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) =>
-                    Dashboard()))
+                Navigator.pushAndRemoveUntil(
+                    context, MaterialPageRoute(
+                    builder: (context) => Dashboard()),
+                    ModalRoute.withName("/dashboard")
+                )
             )
           });
         }
