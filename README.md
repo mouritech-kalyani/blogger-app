@@ -1,6 +1,7 @@
 # Flutter Blogging App
 
-# Set Up For Blogger App
+## Video Link : https://kalyani-h-pawar.github.io/videos/blogger.html
+## Set Up For Blogger App
 
 ### Download and set up environment variables for Android Studio
 ### Set up Flutter SDK into Android Studio
