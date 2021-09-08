@@ -30,4 +30,4 @@
 ### 5. On My Blogs you can see your blogs,if no blogs are there you can add ,simply click on + button
 ### 6. On My Profile you can see your profile,where you can Update your profile picture/name/company/password
 ### 7. On All Blogs you can like the blog simply click on Like button and if you want to post comment on that blog you can go ahead
-### 8. On My Blogs you can able to see your all blogs,Likes and comments for that blog. if you want to edit/delete your blog from there
+### 8. On My Blogs you are able to see all your blogs,Likes and comments for that blog. if you want to edit/delete your blog from there
