@@ -169,48 +169,51 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
-  signUpFunction()async{
-    setState(() {
-      isLoading = true;
-    });
-     await post(Uri.parse(
-        "https://blogger-mobile.herokuapp.com/sign-up"),
-        headers: {
-          "content-type": "application/json",
-          "accept": "application/json",
-        },
-        body: jsonEncode({
-          "fullName": fullName,
-          "username": email,
-          "password":password,
-          "companyName": companyName
-        })
-    ).then((result) => {
-     print('Registration is ${result.body}'),
-         if(result.body != "Email already Exists !"){
+   signUpFunction()async{
+    if(passwordError.length <1){
       setState(() {
-        isLoading = false;
-      }),
-      Fluttertoast.showToast(
-        msg: "Registration Successfully",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-      ).then((value) =>
-          Navigator.pushAndRemoveUntil(
-              context, MaterialPageRoute(
-              builder: (context) => SignIn()),
-              ModalRoute.withName("/signin")
+        isLoading = true;
+      });
+      await post(Uri.parse(
+          "https://blogger-mobile.herokuapp.com/sign-up"),
+          headers: {
+            "content-type": "application/json",
+            "accept": "application/json",
+          },
+          body: jsonEncode({
+            "fullName": fullName,
+            "username": email,
+            "password":password,
+            "companyName": companyName
+          })
+      ).then((result) => {
+        print('Registration is ${result.body}'),
+        if(result.body != "Email already Exists !"){
+          setState(() {
+            isLoading = false;
+          }),
+          Fluttertoast.showToast(
+            msg: "Registration Successfully",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+          ).then((value) =>
+              Navigator.pushAndRemoveUntil(
+                  context, MaterialPageRoute(
+                  builder: (context) => SignIn()),
+                  ModalRoute.withName("/signin")
+              )
           )
-      )
+        }
+        else{
+          print('Registration is ${result.body}'),
+          setState(() {
+            isLoading = false;
+            logError = "Email already Exist !Please try with another";
+          })
+        }
+      });
     }
-    else{
-           print('Registration is ${result.body}'),
-    setState(() {
-    isLoading = false;
-    logError = "Email already Exist !Please try with another";
-    })
-    }
-    });
+
   }
 }
