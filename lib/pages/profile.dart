@@ -282,20 +282,23 @@ class _MyProfileState extends State<MyProfile> {
     });
     print('clicked profile img is $profilePic and pic flag is $isProfileChange');
   }
-  saveDetails(BuildContext context) async{
-    isLoading=true;
+saveDetails(BuildContext context) async{
+    if(passwordError.length < 1){
+      setState(() {
+        isLoading=true;
+      });
       print("before edited data is $fullName, $companyName, $password, $profilePic,$isProfileChange");
       print('pic flag $isProfileChange');
-    if(fullNameEdit == '' && passwordEdit == '' && companyNameEdit == '' && isProfileChange == false){
-      setState(() {
-        // isEditable=false;
-        formError="Please provide the data to update";
-      });
+      if(fullNameEdit == '' && passwordEdit == '' && companyNameEdit == '' && isProfileChange == false){
+        setState(() {
+          // isEditable=false;
+          formError="Please provide the data to update";
+        });
 
-    }else {
-      setState(() {
-        formError='';
-      });
+      }else {
+        setState(() {
+          formError='';
+        });
         if(fullNameEdit == '' && companyNameEdit == '' && passwordEdit == ''){
 
           setState(() {
@@ -304,19 +307,19 @@ class _MyProfileState extends State<MyProfile> {
             passwordEdit=password;
           });
 
-      }
-      else if(fullNameEdit == '' && companyNameEdit == ''){
+        }
+        else if(fullNameEdit == '' && companyNameEdit == ''){
           setState(() {
             fullNameEdit=fullName;
             companyNameEdit=companyName;
           });
-      }
-      else if(companyNameEdit == '' && passwordEdit == ''){
-        setState(() {
-          companyNameEdit=companyName;
-          passwordEdit=password;
-        });
-      }
+        }
+        else if(companyNameEdit == '' && passwordEdit == ''){
+          setState(() {
+            companyNameEdit=companyName;
+            passwordEdit=password;
+          });
+        }
         else if(fullNameEdit == '' && passwordEdit == ''){
           setState(() {
             fullNameEdit=fullName;
@@ -325,8 +328,8 @@ class _MyProfileState extends State<MyProfile> {
         }
 
 
-      print(
-          "after editing is $fullNameEdit,$passwordEdit,$companyNameEdit,$profilePic");
+        print(
+            "after editing is $fullNameEdit,$passwordEdit,$companyNameEdit,$profilePic");
 
         await put(Uri.parse(
             "https://blogger-mobile.herokuapp.com/users"),
@@ -362,11 +365,13 @@ class _MyProfileState extends State<MyProfile> {
           // })
         }
         );
-      setState(() {
-        isEditable=false;
-        _showPassword=!_showPassword;
-        isLoading=false;
-      });
+        setState(() {
+          isEditable=false;
+          _showPassword=!_showPassword;
+          isLoading=false;
+        });
+      }
     }
+
   }
 }
