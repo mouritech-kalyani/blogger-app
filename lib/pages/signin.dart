@@ -133,50 +133,53 @@ class _SignInState extends State<SignIn> {
       ),
     );
   }
-  signInFunction()async{
-    setState(() {
-      isLoading = true;
-    });
-    await post(Uri.parse(
-        "https://blogger-mobile.herokuapp.com/log-in"),
-        headers: {
-          "content-type": "application/json",
-          "accept": "application/json",
-        },
-        body: jsonEncode({
-          "username": email,
-          "password":password,
-
-        })
-    ).then((result) =>{
-    print('Log in is ${result.body}'),
-    if(result.body != 'false') {
-      setState((){
-        currentUser=jsonDecode(result.body);
-      }),
-    currentUser.forEach((e) => {
-    setState(()  {
-    userId=e["userId"];
-    username=e["username"];
-    password=e["password"];
-     print("data after login on login is $userId,$username,$password");
-    })
-    }),
-      setUserSession(),
-    Navigator.pushAndRemoveUntil(
-    context, MaterialPageRoute(
-    builder: (context) => Dashboard()),
-    ModalRoute.withName("/dashboard")
-    )
-    }
-    else{
-
+    signInFunction()async{
+    if(passwordError.length <1){
       setState(() {
-        isLoading = false;
-        logError = "Invalid Login.Please check Username/Password";
-      })
+        isLoading = true;
+      });
+      await post(Uri.parse(
+          "https://blogger-mobile.herokuapp.com/log-in"),
+          headers: {
+            "content-type": "application/json",
+            "accept": "application/json",
+          },
+          body: jsonEncode({
+            "username": email,
+            "password":password,
+
+          })
+      ).then((result) =>{
+        print('Log in is ${result.body}'),
+        if(result.body != 'false') {
+          setState((){
+            currentUser=jsonDecode(result.body);
+          }),
+          currentUser.forEach((e) => {
+            setState(()  {
+              userId=e["userId"];
+              username=e["username"];
+              password=e["password"];
+              print("data after login on login is $userId,$username,$password");
+            })
+          }),
+          setUserSession(),
+          Navigator.pushAndRemoveUntil(
+              context, MaterialPageRoute(
+              builder: (context) => Dashboard()),
+              ModalRoute.withName("/dashboard")
+          )
+        }
+        else{
+
+          setState(() {
+            isLoading = false;
+            logError = "Invalid Login.Please check Username/Password";
+          })
+        }
+      });
     }
-    });
+
 
   }
   setUserSession()async{
