@@ -49,7 +49,7 @@ class _PeopleState extends State<People> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('All blogs'),
+        title: Text('People'),
         backgroundColor: Colors.blueAccent,
       ),
       body: isLoading ?SpinKitFadingCircle(color: Colors.blueAccent[400],size: 70.0,)
