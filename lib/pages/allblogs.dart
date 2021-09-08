@@ -49,7 +49,7 @@ class _AllBlogsState extends State<AllBlogs> {
         title: Text('All blogs'),
         backgroundColor: Colors.blueAccent,
       ),
-          body: isLoading ?SpinKitFadingCircle(color: Colors.blueAccent[400],size: 70.0,)
+          body: isLoading ?Center(child: SpinKitFadingCircle(color: Colors.blueAccent[400],size: 70.0))
           :allBlogs.isEmpty ? Center(child:Text("Follow the bloggers to see blogs",style: TextStyle(fontSize: 20),)) :  SingleChildScrollView(
             child: Container(
                   margin: const EdgeInsets.all(10.0),
