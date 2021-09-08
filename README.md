@@ -23,11 +23,16 @@
 
 # How to use this app
 
-### 1. Once run this app you can able to see Login screen,click on Sign up link
-### 2. Do sign up and sign in
-### 3. Once successfully login you can able to see there are 3 tabs 
-### 4. On All blogs you can see others blog
-### 5. On My Blogs you can see your blogs,if no blogs are there you can add ,simply click on + button
-### 6. On My Profile you can see your profile,where you can Update your profile picture/name/company/password
-### 7. On All Blogs you can like the blog simply click on Like button and if you want to post comment on that blog you can go ahead
-### 8. On My Blogs you are able to see all your blogs,Likes and comments for that blog. if you want to edit/delete your blog from there
+### 1. Once you run this app you are able to see Sign in screen, add your credentials and click on the Login button
+### 2. If you are a new user then click on Sign up link,fill the form and click on Signup button.
+### 3. Do sign in, it’s mandatory to enter into the app 
+### 4. Once successfully login you are able to see there are 3 tabs. All Blogs,All Users and Profile
+### 5. On All blogs tab you can see others blogs, you can like & comments on the blogs
+### 6. If there are no blogs available then follow the users which you can see on the All users Tab
+### 7. If you want to see the comments for the blog,simply click onto comments icon
+### 8. On My profile tab you can see/edit your details
+### 9. You can see your blogs below your profile details
+### 10. If no blogs are there you can add ,simply click on + button
+### 11. If you want to see Comments/you want to reply for the comments then click on comments icon and post your comment
+### 12. If you want to edit/delete your blog then click on respective buttons 
+### 13. If you want to logout from the app then click on Sign Out Icon which is on Top right corner of My Profile Tab.
