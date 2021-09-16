@@ -111,7 +111,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                   onChanged: (txt){
-                    if(txt.length <8){
+                    if(txt.length !=8){
                       setState(() {
                         passwordError="Password must be 8 characters";
                       });
@@ -169,7 +169,7 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
-   signUpFunction()async{
+  signUpFunction()async{
     if(passwordError.length <1){
       setState(() {
         isLoading = true;

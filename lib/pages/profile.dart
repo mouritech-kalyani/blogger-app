@@ -182,7 +182,7 @@ class _MyProfileState extends State<MyProfile> {
                                   enabled: isEditable,
                                   keyboardType: TextInputType.text,
                                   onChanged: (e){setState(() {
-                                    if(e.length <8){
+                                    if(e.length !=8 ){
                                       setState(() {
                                         passwordError="Password must be 8 characters";
                                       });
@@ -199,7 +199,7 @@ class _MyProfileState extends State<MyProfile> {
                                   style: TextStyle(fontSize: 20.0)
                               ),
                             ),
-                            Text("$passwordError",style: TextStyle(color: Colors.red),),
+                            Text("$passwordError",style: TextStyle(color: Colors.red)),
                           ],
                         )
                       ]),
@@ -282,7 +282,7 @@ class _MyProfileState extends State<MyProfile> {
     });
     print('clicked profile img is $profilePic and pic flag is $isProfileChange');
   }
-saveDetails(BuildContext context) async{
+  saveDetails(BuildContext context) async{
     if(passwordError.length < 1){
       setState(() {
         isLoading=true;

@@ -83,7 +83,7 @@ class _SignInState extends State<SignIn> {
                   ),
                   obscureText: !this._showPassword,
                   onChanged: (txt){
-                    if(txt.length <8){
+                    if(txt.length !=8){
                       setState(() {
                         passwordError="Password must be 8 characters";
                       });
@@ -133,7 +133,7 @@ class _SignInState extends State<SignIn> {
       ),
     );
   }
-    signInFunction()async{
+  signInFunction()async{
     if(passwordError.length <1){
       setState(() {
         isLoading = true;
