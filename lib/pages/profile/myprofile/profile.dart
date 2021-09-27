@@ -125,6 +125,10 @@ class _MyProfileState extends State<MyProfile> {
                 Widget continueButton = TextButton(
                 child: Text("Yes"),
                 onPressed:  () async {
+                  Navigator.pop(context);
+                  setState(() {
+                    isLoading=true;
+                  });
                   //Api to deactivate user account
                   dynamic sessionUid= await FlutterSession().get("userId");
                  await put(Uri.parse("$accountStatusApi"),
@@ -160,7 +164,7 @@ class _MyProfileState extends State<MyProfile> {
 
                 // set up the AlertDialog
                 AlertDialog alert = AlertDialog(
-                title: Text("Delete Blog"),
+                title: Text("Delete Account"),
                 content: Text("$deleteAccount"),
                 actions: [
                 cancelButton,

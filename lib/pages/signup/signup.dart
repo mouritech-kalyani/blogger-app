@@ -266,7 +266,7 @@ class _SignUpState extends State<SignUp> {
   //put the userid into session to check whether user is logged in or not
   setUserSession()async{
     var session = FlutterSession();
-    await session.set("userId", userId);
+    await session.set("userId", userIdd);
 
   }
 }
