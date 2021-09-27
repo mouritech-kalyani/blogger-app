@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:bloggers/utils/apis/allapis.dart';
 import 'package:bloggers/utils/messages/message.dart';
 import 'package:bloggers/utils/styles/icons/icons.dart';
+import 'package:bloggers/utils/styles/sizes/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -18,8 +19,8 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   var uid;
-  var userId;
-  var userIdd;
+  String userId='';
+  int userIdd=0;
   List currentUser=[];
   String fullName='';
   String companyName='';
@@ -60,7 +61,7 @@ class _SignUpState extends State<SignUp> {
                 TextField(
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                        borderSide: new BorderSide(color: fnameError == "" ? Colors.black12 : Colors.red)
+                        borderSide: BorderSide(color: fnameError == "" ? Colors.black12 : Colors.red)
                     ),
                     border:OutlineInputBorder(),
                     hintText: "$fullNamePlaceholder",
@@ -68,16 +69,25 @@ class _SignUpState extends State<SignUp> {
                     labelStyle: TextStyle(fontSize: 20,color: Colors.black54),
                   ),
                   keyboardType: TextInputType.text,
-                  onChanged: (txt){setState(() {
-                    fullName=txt;
-                  });},
+                  onChanged: (txt){
+                  if(txt.length <3){
+                    setState(() {
+                      fnameError=validFullName;
+                    });
+                  }else{
+                    setState(() {
+                      fnameError="";
+                      fullName=txt;
+                    });
+                  }
+                  },
                 ),
                 Text('$fnameError',style: TextStyle(color: Colors.red,fontSize: 15),),
                 SizedBox(height: 20),
                 TextField(
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                        borderSide: new BorderSide(color: compError == "" ? Colors.black12 : Colors.red)
+                        borderSide:  BorderSide(color: compError == "" ? Colors.black12 : Colors.red)
                     ),
                     border:OutlineInputBorder(),
                     hintText: "$companyNamePlaceholder",
@@ -85,36 +95,46 @@ class _SignUpState extends State<SignUp> {
                     labelStyle: TextStyle(fontSize: 20,color: Colors.black54),
                   ),
                   keyboardType: TextInputType.text,
-                  onChanged: (txt){setState(() {
-                    companyName=txt;
-                  });},
+                  onChanged: (txt){
+                  if(txt.length <3){
+                    setState(() {
+                      compError=validCompanyName;
+                    });
+                  }else{
+                    setState(() {
+                      compError="";
+                      companyName=txt;
+                    });
+                  }
+                  },
                 ),
                 Text('$compError',style: TextStyle(color: Colors.red,fontSize: 15)),
                 SizedBox(height: 20),
                 TextField(
                   decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: new BorderSide(color: emailError == "" ? Colors.black12 : Colors.red)
+                    focusedBorder : OutlineInputBorder(
+                        borderSide: BorderSide(color: emailError == "" ? Colors.black12 : Colors.red)
                     ),
                     border:OutlineInputBorder(),
-                    hintText: "$userNamePlaceholder",
+                    hintText: '$userNamePlaceholder',
                     labelText: "Email/Username",
-                    labelStyle: TextStyle(fontSize: 20,color: Colors.black54),
+                    labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black54),
                   ),
-                  onChanged: (txt){setState(() {
-                    email=txt;
-                  });
-                  if(!emailValid.hasMatch(email)){
-                    setState(() {
-                      emailError='$emailError';
-                    });
-                  }else{
-                    emailError='';
-                  }
-                  },
                   keyboardType: TextInputType.emailAddress,
+                  onChanged: (txt){
+                    if(!emailValid.hasMatch(txt)){
+                      setState(() {
+                        emailError='$validateError';
+                      });
+                    }else{setState(() {
+                      emailError='';
+                      email=txt;
+                    });}
+                  },
                 ),
-                Text('$emailError',style: TextStyle(color: Colors.red,fontSize: 15)),
+                //show email error if it is invalid
+                Text('$emailError',style: TextStyle(color: Colors.red,fontSize: blogTimeAndCompany)),
+
                 SizedBox(height: 20),
                 TextField(
                   obscureText: !this._showPassword,
@@ -209,7 +229,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
   signUpFunction()async{
-    if(passwordError.length <1){
+    if(passwordError.length <1 && emailError == '' && compError == '' && fnameError == ''){
       setState(() {
         isLoading = true;
       });
@@ -229,10 +249,10 @@ class _SignUpState extends State<SignUp> {
       ).then((result) => {
         if(result.body != ""){
           setState((){
-            userId=result.body.substring(10,12);
-            isLoading = false;
+              userId=result.body.substring(10,12);
+              isLoading = false;
           }),
-          userIdd = int.parse(userId),
+          userIdd=int.parse(userId),
            setUserSession(),
           Fluttertoast.showToast(
             msg: "$registrationSuccess",
@@ -266,7 +286,7 @@ class _SignUpState extends State<SignUp> {
   //put the userid into session to check whether user is logged in or not
   setUserSession()async{
     var session = FlutterSession();
-    await session.set("userId", userIdd);
+    await session.set("userId", userId);
 
   }
 }

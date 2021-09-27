@@ -59,20 +59,19 @@ class _SignInState extends State<SignIn> {
                         borderSide: BorderSide(color: emailError == "" ? Colors.black12 : Colors.red)
                     ),
                     border:OutlineInputBorder(),
-                    hintText: '$usernamePlaceholder',
+                    hintText: '$userNamePlaceholder',
                     labelText: "Email/Username",
                     labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black54),
                   ),
                   keyboardType: TextInputType.emailAddress,
-                  onChanged: (txt){setState(() {
-                    email=txt;
-                  });
-                  if(!emailValid.hasMatch(email)){
+                  onChanged: (txt){
+                  if(!emailValid.hasMatch(txt)){
                     setState(() {
                       emailError='$validateError';
                     });
                   }else{setState(() {
                     emailError='';
+                    email=txt;
                   });}
                   },
                 ),
