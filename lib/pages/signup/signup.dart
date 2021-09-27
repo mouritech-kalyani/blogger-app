@@ -1,10 +1,13 @@
 import 'dart:convert';
-
-import 'package:bloggers/pages/signin.dart';
+import 'package:bloggers/utils/apis/allapis.dart';
+import 'package:bloggers/utils/messages/message.dart';
+import 'package:bloggers/utils/styles/icons/icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
+import '../dashboard/dashboard.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -15,6 +18,9 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   var uid;
+  var userId;
+  var userIdd;
+  List currentUser=[];
   String fullName='';
   String companyName='';
   String password='';
@@ -31,24 +37,35 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Sign Up"),backgroundColor:Colors.blueAccent,),
+      appBar: AppBar(
+        title: Text('Sign Up',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25)),
+        backgroundColor:Colors.deepOrangeAccent,
+        leading: GestureDetector(
+          child: Image.asset("$appIcon",color: Colors.white,),
+        ),
+      ),
       body:
+          //Fill the details to register yourself
       SingleChildScrollView(
         child: Container(
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Center(child: Text('$logError',
-                    style: TextStyle(color: Colors.red,fontSize: 20,fontWeight: FontWeight.bold))),
+                // Center(child: Text('$logError',
+                //     style: TextStyle(color: Colors.red,fontSize: 20,fontWeight: FontWeight.bold))),
                 SizedBox(height: 20,),
                 TextField(
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Enter full name",
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: new BorderSide(color: fnameError == "" ? Colors.black12 : Colors.red)
+                    ),
+                    border:OutlineInputBorder(),
+                    hintText: "$fullNamePlaceholder",
                     labelText: "Full Name",
-                    labelStyle: TextStyle(fontSize: 20),
+                    labelStyle: TextStyle(fontSize: 20,color: Colors.black54),
                   ),
                   keyboardType: TextInputType.text,
                   onChanged: (txt){setState(() {
@@ -56,13 +73,16 @@ class _SignUpState extends State<SignUp> {
                   });},
                 ),
                 Text('$fnameError',style: TextStyle(color: Colors.red,fontSize: 15),),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 TextField(
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Enter your company name",
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: new BorderSide(color: compError == "" ? Colors.black12 : Colors.red)
+                    ),
+                    border:OutlineInputBorder(),
+                    hintText: "$companyNamePlaceholder",
                     labelText: "Company Name",
-                    labelStyle: TextStyle(fontSize: 20),
+                    labelStyle: TextStyle(fontSize: 20,color: Colors.black54),
                   ),
                   keyboardType: TextInputType.text,
                   onChanged: (txt){setState(() {
@@ -70,20 +90,23 @@ class _SignUpState extends State<SignUp> {
                   });},
                 ),
                 Text('$compError',style: TextStyle(color: Colors.red,fontSize: 15)),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 TextField(
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Enter Valid Email ID",
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: new BorderSide(color: emailError == "" ? Colors.black12 : Colors.red)
+                    ),
+                    border:OutlineInputBorder(),
+                    hintText: "$userNamePlaceholder",
                     labelText: "Email/Username",
-                    labelStyle: TextStyle(fontSize: 20),
+                    labelStyle: TextStyle(fontSize: 20,color: Colors.black54),
                   ),
                   onChanged: (txt){setState(() {
                     email=txt;
                   });
                   if(!emailValid.hasMatch(email)){
                     setState(() {
-                      emailError='Please enter valid email address';
+                      emailError='$emailError';
                     });
                   }else{
                     emailError='';
@@ -92,14 +115,17 @@ class _SignUpState extends State<SignUp> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 Text('$emailError',style: TextStyle(color: Colors.red,fontSize: 15)),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 TextField(
                   obscureText: !this._showPassword,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Enter Your Password",
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: new BorderSide(color: passwordError == "" ? Colors.black12 : Colors.red)
+                    ),
+                    border:OutlineInputBorder(),
+                    hintText: "$passwordPlaceholderSignUp",
                     labelText: "Password",
-                    labelStyle: TextStyle(fontSize: 20),
+                    labelStyle: TextStyle(fontSize: 20,color: Colors.black54),
                     suffixIcon: IconButton(
                       icon: Icon(
                         Icons.remove_red_eye,
@@ -113,7 +139,7 @@ class _SignUpState extends State<SignUp> {
                   onChanged: (txt){
                     if(txt.length !=8){
                       setState(() {
-                        passwordError="Password must be 8 characters";
+                        passwordError="$validatePassword";
                       });
                     }else{
                       setState(() {
@@ -128,24 +154,29 @@ class _SignUpState extends State<SignUp> {
 
                 SizedBox(height: 20),
                 GestureDetector(
-                  child: Center(child: Text('Already have an Account ? Sign In', style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent,fontSize: 20))),
+                  //If account is already there then do sign in
+                  child: Center(child: Text('$accountIs', style: TextStyle(decoration: TextDecoration.underline,color: Colors.deepOrangeAccent,fontSize: 20))),
                   onTap: (){
                     Navigator.pushNamed(context, '/signin');
                   },
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 Center(
-                  child: isLoading? SpinKitFadingCircle(color: Colors.blueAccent[400],size: 40.0,) :
+                  child: isLoading? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: 40.0,) :
                   ElevatedButton(
                       onPressed: ()=>
                       {
-                        print(
-                            'Data is $fullName ,$companyName, $email ,$password'),
                         if(fullName.isEmpty || companyName.isEmpty ||
                             email.isEmpty || password.isEmpty){
                           setState(() {
-                            logError = 'All Flelds are Required !';
+                            logError = '$requiredFilled';
                           }),
+                          Fluttertoast.showToast(
+                            msg: logError,
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                          )
                         } else
                           {
                              signUpFunction()
@@ -154,8 +185,16 @@ class _SignUpState extends State<SignUp> {
                       // logInSuccess(context);
                       // Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard(username:username,password:password)));
                       child: Text('Sign Up',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 20),),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.fromLTRB(40,10,40,10),
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50,20,50,20)),
+                        backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  //side: BorderSide(color: Colors.red)
+                              )
+                          )
+
                       )
                     // ButtonStyle(
                     //     backgroundColor: MaterialStateProperty.all(Colors.pinkAccent),
@@ -174,8 +213,8 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         isLoading = true;
       });
-      await post(Uri.parse(
-          "https://blogger-mobile.herokuapp.com/sign-up"),
+      //Validate all the fields and add user data
+      await post(Uri.parse("$signUpApi"),
           headers: {
             "content-type": "application/json",
             "accept": "application/json",
@@ -184,36 +223,50 @@ class _SignUpState extends State<SignUp> {
             "fullName": fullName,
             "username": email,
             "password":password,
-            "companyName": companyName
+            "companyName": companyName,
+            "accountStatus":"activate"
           })
       ).then((result) => {
-        print('Registration is ${result.body}'),
-        if(result.body != "Email already Exists !"){
-          setState(() {
+        if(result.body != ""){
+          setState((){
+            userId=result.body.substring(10,12);
             isLoading = false;
           }),
+          userIdd = int.parse(userId),
+           setUserSession(),
           Fluttertoast.showToast(
-            msg: "Registration Successfully",
+            msg: "$registrationSuccess",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
           ).then((value) =>
-              Navigator.pushAndRemoveUntil(
-                  context, MaterialPageRoute(
-                  builder: (context) => SignIn()),
-                  ModalRoute.withName("/signin")
-              )
-          )
+
+                Navigator.pushAndRemoveUntil(
+                    context, MaterialPageRoute(
+                    builder: (context) => Dashboard()),
+                    ModalRoute.withName("/dashboard")
+                ))
         }
         else{
-          print('Registration is ${result.body}'),
           setState(() {
             isLoading = false;
-            logError = "Email already Exist !Please try with another";
-          })
+            logError = "$emailPresent";
+          }),
+          Fluttertoast.showToast(
+          msg: logError,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          )
         }
       });
     }
+
+  }
+  //put the userid into session to check whether user is logged in or not
+  setUserSession()async{
+    var session = FlutterSession();
+    await session.set("userId", userId);
 
   }
 }

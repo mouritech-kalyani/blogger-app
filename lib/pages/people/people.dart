@@ -1,14 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:bloggers/utils/apis/allapis.dart';
+import 'package:bloggers/utils/messages/message.dart';
+import 'package:bloggers/utils/styles/icons/icons.dart';
+import 'package:bloggers/utils/styles/sizes/sizes.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
-
-import 'dashboard.dart';
+import '../dashboard/dashboard.dart';
 
 class People extends StatefulWidget {
   const People({Key? key}) : super(key: key);
@@ -28,8 +29,10 @@ class _PeopleState extends State<People> {
     super.initState();
   }
   getWholeBlogs()async{
+    //By passing logged in userId take all un follow users
+
     dynamic sessionUid= await FlutterSession().get("userId");
-    await get(Uri.parse("https://blogger-mobile.herokuapp.com/get-all-unfollow/$sessionUid"),
+    await get(Uri.parse("$peopleApi/$sessionUid"),
         headers: {
           "content-type": "application/json",
           "accept": "application/json",
@@ -39,7 +42,6 @@ class _PeopleState extends State<People> {
         allUsers=jsonDecode(result.body);
       })
     });
-    print("all blogs on dash are $allUsers");
     setState(() {
       allUsers=allUsers;
       isLoading=false;
@@ -49,10 +51,13 @@ class _PeopleState extends State<People> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('People'),
-        backgroundColor: Colors.blueAccent,
+        title: Text('People',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
+        backgroundColor:Colors.deepOrangeAccent,
+        leading: GestureDetector(
+          child: Image.asset("$appIcon",color: Colors.white,),
+        ),
       ),
-      body: isLoading ?SpinKitFadingCircle(color: Colors.blueAccent[400],size: 70.0,)
+      body: isLoading ?SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: fadingCircleSize,)
           :SingleChildScrollView(
           child: Container(
             margin: const EdgeInsets.all(10.0),
@@ -69,7 +74,7 @@ class _PeopleState extends State<People> {
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
-                                allUsers[index]["profilePic"] == null ?  CircleAvatar(backgroundImage: AssetImage('assets/nodp.png'),): CircleAvatar(backgroundImage: FileImage(File(allUsers[index]["profilePic"])),radius: 20,),
+                                allUsers[index]["profilePic"] == null ?  CircleAvatar(backgroundImage: AssetImage('assets/nodp.png'),): CircleAvatar(backgroundImage: FileImage(File(allUsers[index]["profilePic"])),radius: normalFontSize,),
                                 // Expanded(flex:4 , child: Text(allUsers[index]["fullName"].toString(),style: TextStyle(fontSize: 18))),
 
                                 Expanded(flex:4 , child: Padding(
@@ -78,12 +83,22 @@ class _PeopleState extends State<People> {
                                 )),
 
                                   Expanded(flex:4 , child: Text(allUsers[index]["companyName"].toString(),style: TextStyle(fontSize: 15))),
-
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      followUser(allUsers[index]["userId"]);
-                                    },
-                                  child: Text("Follow",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800,color:Colors.white),),),
+                                  Expanded(
+                                    flex:4,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        followUser(allUsers[index]["userId"]);
+                                      },
+                                    style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(Colors.deepOrange),
+                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(sizedHeightMinHeight)
+                                    )
+                                    )
+                                    ),
+                                    child: Text("Follow",style: TextStyle(fontSize: blogTimeAndCompany,fontWeight: FontWeight.w800,color:Colors.white),),),
+                                  ),
 
                             // Divider( color: Colors.grey[800],),
                           ]
@@ -101,9 +116,13 @@ class _PeopleState extends State<People> {
     );
   }
   followUser(id)async{
+    setState(() {
+      isLoading=true;
+    });
+    //if click on follow button then simply add the user into logged in user list
     dynamic sessionUid= await FlutterSession().get("userId");
     await post(Uri.parse(
-        "https://blogger-mobile.herokuapp.com/follow"),
+        "$doFollowApi"),
         headers: {
           "content-type": "application/json",
           "accept": "application/json",
@@ -117,12 +136,19 @@ class _PeopleState extends State<People> {
           },
         })
     ).then((result)=>{
-      print("result"),
-      Navigator.pushAndRemoveUntil(
-          context, MaterialPageRoute(
-          builder: (context) => Dashboard()),
-          ModalRoute.withName("/dashboard")
-      )
+      Fluttertoast.showToast(
+        msg: "$followed",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+      ).then((value) => {
+        Navigator.pushAndRemoveUntil(
+            context, MaterialPageRoute(
+            builder: (context) => Dashboard()),
+            ModalRoute.withName("/dashboard")
+        )
+      })
+
     });
   }
 }

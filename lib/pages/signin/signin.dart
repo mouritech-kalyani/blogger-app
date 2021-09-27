@@ -1,8 +1,14 @@
 import 'dart:convert';
-import 'package:bloggers/pages/dashboard.dart';
+import 'dart:ui';
+import 'package:bloggers/pages/dashboard/dashboard.dart';
+import 'package:bloggers/utils/apis/allapis.dart';
+import 'package:bloggers/utils/messages/message.dart';
+import 'package:bloggers/utils/styles/icons/icons.dart';
+import 'package:bloggers/utils/styles/sizes/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 
 class SignIn extends StatefulWidget {
@@ -29,26 +35,33 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign In'),
-        backgroundColor:Colors.blueAccent,
+        title: Text('Sign In',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
+        backgroundColor:Colors.deepOrangeAccent,
+        leading: GestureDetector(
+          child: Image.asset("$appIcon",color: Colors.white,),
+        ),
       ),
+
+      //body of sign in page to get valid username & password from user
+
       body: SingleChildScrollView(
         child: Container(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(height: 10),
-                Center(child: Text('$logError',style: TextStyle(color: Colors.red,fontSize: 20,fontWeight: FontWeight.bold))),
-                SizedBox(height:25),
+                SizedBox(height: normalFontSize),
                 TextField(
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter Username',
+                    focusedBorder : OutlineInputBorder(
+                        borderSide: BorderSide(color: emailError == "" ? Colors.black12 : Colors.red)
+                    ),
+                    border:OutlineInputBorder(),
+                    hintText: '$usernamePlaceholder',
                     labelText: "Email/Username",
-                    labelStyle: TextStyle(fontSize: 20),
+                    labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black54),
                   ),
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (txt){setState(() {
@@ -56,21 +69,25 @@ class _SignInState extends State<SignIn> {
                   });
                   if(!emailValid.hasMatch(email)){
                     setState(() {
-                      emailError='Please enter valid email address';
+                      emailError='$validateError';
                     });
                   }else{setState(() {
                     emailError='';
                   });}
                   },
                 ),
-                Text('$emailError',style: TextStyle(color: Colors.red,fontSize: 15)),
-                SizedBox(height: 10),
+                //show email error if it is invalid
+                Text('$emailError',style: TextStyle(color: Colors.red,fontSize: blogTimeAndCompany)),
+                SizedBox(height: normalFontSize),
                 TextField(
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter Password',
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: passwordError == "" ? Colors.black12 : Colors.red)
+                    ),
+                    border:OutlineInputBorder(),
+                    hintText: '$passwordPlaceholder',
                     labelText: "Password",
-                    labelStyle: TextStyle(fontSize: 20),
+                    labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black54),
                     suffixIcon: IconButton(
                       icon: Icon(
                         Icons.remove_red_eye,
@@ -85,7 +102,7 @@ class _SignInState extends State<SignIn> {
                   onChanged: (txt){
                     if(txt.length !=8){
                       setState(() {
-                        passwordError="Password must be 8 characters";
+                        passwordError="$validatePassword";
                       });
                     }else{
                       setState(() {
@@ -96,34 +113,47 @@ class _SignInState extends State<SignIn> {
                     }
                   },
                 ),
-                Text('$passwordError',style: TextStyle(color: Colors.red,fontSize: 15)),
-                SizedBox(height: 10),
+                //show password error if it is invalid
+                Text('$passwordError',style: TextStyle(color: Colors.red,fontSize: blogTimeAndCompany)),
+                SizedBox(height: normalFontSize),
                 GestureDetector(
-                  child: Center(child: Text("Don't have an Account? Sign UP", style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent,fontSize: 20))),
+                  //if account not there then sign up
+
+                  child: Center(child: Text("$noAccount", style: TextStyle(decoration: TextDecoration.underline,color: Colors.deepOrangeAccent,fontSize: normalFontSize))),
                   onTap: (){
                     Navigator.pushNamed(context, '/signup');
                   },
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: normalFontSize),
                 Center(
-                  child: isLoading? SpinKitFadingCircle(color: Colors.blueAccent[400],size: 40.0,) :
+                  child: isLoading? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: radiusCircle,) :
                   ElevatedButton(
                       onPressed: (){
+                        //if form error the show on toast
                         if(email .isEmpty || password.isEmpty){
                           setState(() {
-                            logError="All Fields are required !";
+                            logError="$requiredFilled";
                           });
+                          Fluttertoast.showToast(
+                            msg: logError,
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                          );
                         }else {
                           signInFunction();
                         }
                       },
-                      child: Text('Sign In',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 20),),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.fromLTRB(40,10,40,10),
+                      child: Text('Sign In',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: normalFontSize),),
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50,20,50,20)),
+                        backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(sizedHeightMinHeight)
+                              )
+                          )
                       )
-                    // ButtonStyle(
-                    //     backgroundColor: MaterialStateProperty.all(Colors.pinkAccent),
-                    // ),
                   ),
                 ),
               ],
@@ -138,8 +168,9 @@ class _SignInState extends State<SignIn> {
       setState(() {
         isLoading = true;
       });
+      //Check username & password is correct or not
       await post(Uri.parse(
-          "https://blogger-mobile.herokuapp.com/log-in"),
+          "$signInAPi"),
           headers: {
             "content-type": "application/json",
             "accept": "application/json",
@@ -150,7 +181,6 @@ class _SignInState extends State<SignIn> {
 
           })
       ).then((result) =>{
-        print('Log in is ${result.body}'),
         if(result.body != 'false') {
           setState((){
             currentUser=jsonDecode(result.body);
@@ -160,7 +190,6 @@ class _SignInState extends State<SignIn> {
               userId=e["userId"];
               username=e["username"];
               password=e["password"];
-              print("data after login on login is $userId,$username,$password");
             })
           }),
           setUserSession(),
@@ -174,14 +203,20 @@ class _SignInState extends State<SignIn> {
 
           setState(() {
             isLoading = false;
-            logError = "Invalid Login.Please check Username/Password";
-          })
+            logError = "$invalidLogin";
+          }),
+          Fluttertoast.showToast(
+          msg: logError,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          )
         }
       });
     }
-
-
   }
+
+  //put the userid into session to check whether user is logged in or not
   setUserSession()async{
   var session = FlutterSession();
   await session.set("userId", userId);

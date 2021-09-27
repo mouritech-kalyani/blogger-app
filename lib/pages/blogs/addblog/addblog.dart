@@ -1,12 +1,17 @@
 import 'dart:convert';
+import 'package:bloggers/pages/dashboard/dashboard.dart';
+import 'package:bloggers/pages/profile/myblogs/myblogs.dart';
+import 'package:bloggers/utils/messages/message.dart';
+import 'package:bloggers/utils/apis/allapis.dart';
+import 'package:bloggers/utils/styles/icons/icons.dart';
+import 'package:bloggers/utils/styles/sizes/sizes.dart';
 import 'package:intl/intl.dart';
-import 'package:bloggers/pages/dashboard.dart';
-import 'package:bloggers/pages/myblogs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
+
 class AddBlog extends StatefulWidget {
   final userId;
   final blogId;
@@ -29,6 +34,7 @@ class _AddBlogState extends State<AddBlog> {
   bool isLoading=false;
   @override
   void initState() {
+    super.initState();
     if(widget.blogId == null && widget.description == null){
       blogId=0;
       userId=widget.userId;
@@ -41,27 +47,39 @@ class _AddBlogState extends State<AddBlog> {
       likes=widget.likes;
       editDescription=widget.description;
     }
-   print("user id,blog id,edit description ${userId} ${widget.blogId} ${widget.description}");
-    print("blog id,editdesc is $blogId, $editDescription");
-    super.initState();
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //App bar description
       appBar: AppBar(
-        title: Text('Add Your Blog'),
+        title: Text('Add Your Blogs',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
+        backgroundColor:Colors.deepOrangeAccent,
+        elevation: 0.0,
+        shadowColor: Colors.orangeAccent,
+        leading: GestureDetector(
+          child: Image.asset(appIcon,color: Colors.white,),
+        ),
       ),
+      //Body of add blog page
       body: Container(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
           children: [
-            Center(child: Text("Add Blog Description Here..",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)),
+            Center(child: Text("$blogDesc",style: TextStyle(fontSize: normalFontSize,fontWeight: FontWeight.bold),)),
             SizedBox(height:30),
+
+            //Check whether user is adding or editing the blog
+            //code for adding new blog
             blogId == 0 ? TextFormField(
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Start writing your new blog..",
+                focusedBorder: OutlineInputBorder(
+                      borderSide: new BorderSide(color: blogError == "" ? Colors.black12 : Colors.red)
+                  ),
+                border:OutlineInputBorder(),
+                  hintText: '$startBlog',
+                  labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black54),
               ),
               keyboardType: TextInputType.multiline,
               minLines: 2,
@@ -72,7 +90,7 @@ class _AddBlogState extends State<AddBlog> {
                 });
                 if(e.length < 15){
                   setState(() {
-                    blogError="Enter Your Descriptive Content";
+                    blogError="$enterDescriptive";
                   });
                 }else{
                   setState(() {
@@ -81,9 +99,14 @@ class _AddBlogState extends State<AddBlog> {
                 }
               },
             ):TextFormField(
+
+              //code for editing the blog
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Start writing your new blog..",
+                focusedBorder: OutlineInputBorder(
+                    borderSide: new BorderSide(color: blogError == "" ? Colors.black12 : Colors.red)
+                ),
+                border:OutlineInputBorder(),
+                hintText: "$startBlog",
               ),
               keyboardType: TextInputType.multiline,
               initialValue: editDescription,
@@ -93,9 +116,10 @@ class _AddBlogState extends State<AddBlog> {
                 setState(() {
                   description=e;
                 });
+                //Check for vaidation
                 if(e.length < 15){
                   setState(() {
-                    blogError="Enter Your Descriptive Content";
+                    blogError="$enterDescriptive";
                   });
                 }else{
                   setState(() {
@@ -104,14 +128,25 @@ class _AddBlogState extends State<AddBlog> {
                 }
               },
             ),
-            Text('$blogError',style: TextStyle(fontSize: 20,color:Colors.red,fontWeight: FontWeight.bold),),
-            isLoading? SpinKitFadingCircle(color: Colors.blueAccent[400],size: 40.0,) :ElevatedButton(onPressed: (){
+            SizedBox(height:normalFontSize),
+            Text('$blogError',style: TextStyle(fontSize: normalFontSize,color:Colors.red),),
+            SizedBox(height:10),
+            // if data is in progess then show loader or else show button
+            isLoading? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: 40.0,) :ElevatedButton(onPressed: (){
               addMyBlog();
             },
-            style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10)
-            ),
-            child: blogId == 0 ? Text("Add") : Text("Edit")),
+                style: ButtonStyle(
+                    padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50,15,50,15)),
+                    backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)
+                        )
+                    )
+                ),
+
+                //Check user is adding or updating blog
+            child: blogId == 0 ? Text("Add",style: TextStyle(fontSize: normalFontSize,fontWeight: FontWeight.bold),) : Text("Edit",style: TextStyle(fontSize: normalFontSize,fontWeight: FontWeight.bold))),
           ],
           ),
         ),
@@ -121,7 +156,7 @@ class _AddBlogState extends State<AddBlog> {
   addMyBlog()async {
     if (description == '') {
       setState(() {
-        blogError = "Please add the content here..";
+        blogError = blogErrorMessage;
       });
     }
     else {
@@ -132,10 +167,9 @@ class _AddBlogState extends State<AddBlog> {
           });
           DateTime now = DateTime.now();
           String blogTime = DateFormat('yyyy-MM-dd').format(now);
-          print(
-              "userid,description and blogtime is $description,$userId,$blogTime");
-          await put(Uri.parse(
-              "https://blogger-mobile.herokuapp.com/blogs"),
+
+          //Integrate edit blog api
+          await put(Uri.parse(allBlogsApi),
               headers: {
                 "content-type": "application/json",
                 "accept": "application/json",
@@ -152,19 +186,22 @@ class _AddBlogState extends State<AddBlog> {
               )
           ).then((result) =>
           {
-            print('blog edited is ${result.body}'),
+            //Show toast message for edit blog
             Fluttertoast.showToast(
-              msg: "Blog Updated",
+              msg: "$blogUpdted",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,
             ).then((value) =>
-                Navigator.pushAndRemoveUntil(
-                    context, MaterialPageRoute(
-                    builder: (context) => MyBlogs()),
-                    ModalRoute.withName("/myblogs")
-                )
-            )
+            {
+              //Navigate to my blogs page
+              Navigator.pop(context),
+              Navigator.pushAndRemoveUntil(
+                  context, MaterialPageRoute(
+                  builder: (context) => MyBlogs()),
+                  ModalRoute.withName("/myblogs")
+              )
+            } )
           });
         }else{
           setState(() {
@@ -172,10 +209,9 @@ class _AddBlogState extends State<AddBlog> {
           });
           DateTime now = DateTime.now();
           String blogTime = DateFormat('yyyy-MM-dd').format(now);
-          print(
-              "userid,description and blogtime,blog id to edit  is $description,$userId,$blogTime,$blogId");
-          await post(Uri.parse(
-              "https://blogger-mobile.herokuapp.com/blogs"),
+
+          //Integrate add blog api
+           await post(Uri.parse(allBlogsApi),
               headers: {
                 "content-type": "application/json",
                 "accept": "application/json",
@@ -191,19 +227,25 @@ class _AddBlogState extends State<AddBlog> {
               )
           ).then((result) =>
           {
-            print('blod added is ${result.body}'),
+            //Show toast message for add blog
+
             Fluttertoast.showToast(
-              msg: "Blog Added",
+              msg: "$blogAdded",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,
             ).then((value) =>
-                Navigator.pushAndRemoveUntil(
-                    context, MaterialPageRoute(
-                    builder: (context) => MyBlogs()),
-                    ModalRoute.withName("/myblogs")
-                )
-            )
+
+           {
+           //Navigate to my blogs page
+           Navigator.pop(context),
+           Navigator.pushAndRemoveUntil(
+           context, MaterialPageRoute(
+           builder: (context) => MyBlogs()),
+           ModalRoute.withName("/myblogs")
+           )
+           }
+           )
           });
         }
       }

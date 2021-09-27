@@ -1,11 +1,14 @@
 import 'dart:convert';
-
+import 'package:bloggers/utils/apis/allapis.dart';
+import 'package:bloggers/utils/messages/message.dart';
+import 'package:bloggers/utils/styles/icons/icons.dart';
+import 'package:bloggers/utils/styles/sizes/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 import 'package:flutter_session/flutter_session.dart';
-import 'AddComments.dart';
-import 'dashboard.dart';
+import '../../comments/AddComments.dart';
+import '../../dashboard/dashboard.dart';
 
 class AllBlogs extends StatefulWidget {
   const AllBlogs({Key? key}) : super(key: key);
@@ -26,7 +29,7 @@ class _AllBlogsState extends State<AllBlogs> {
   }
   getWholeBlogs()async{
     dynamic sessionUid= await FlutterSession().get("userId");
-    await get(Uri.parse("https://blogger-mobile.herokuapp.com/blogs/$sessionUid"),
+    await get(Uri.parse("$allBlogsApi/$sessionUid"),
         headers: {
         "content-type": "application/json",
         "accept": "application/json",
@@ -36,7 +39,6 @@ class _AllBlogsState extends State<AllBlogs> {
         allBlogs=jsonDecode(result.body);
       })
     });
-    print("all blogs on dash are $allBlogs");
     setState(() {
       allBlogs=allBlogs;
       isLoading=false;
@@ -46,11 +48,23 @@ class _AllBlogsState extends State<AllBlogs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('All blogs'),
-        backgroundColor: Colors.blueAccent,
+        title: Text('All Blogs',style: TextStyle(fontWeight: FontWeight.bold,fontSize: allBlogSize)),
+        backgroundColor:Colors.deepOrangeAccent,
+        leading: GestureDetector(
+          child: Image.asset("$appIcon",color: Colors.white),
+        ),
       ),
-          body: isLoading ?Center(child: SpinKitFadingCircle(color: Colors.blueAccent[400],size: 70.0))
-          :allBlogs.isEmpty ? Center(child:Text("Follow the bloggers to see blogs",style: TextStyle(fontSize: 20),)) :  SingleChildScrollView(
+          //Check whether data is in progress or not and blogs are empty or not
+         // if user is not followed yet to blogger then there is no blog text
+          body: isLoading ?Center(child: SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: fadingCircleSize))
+          :allBlogs.isEmpty ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset("$noBlogsIcon",height: 100,width:100),
+              SizedBox(height: 30,),
+              Center(child:Text("$followBlogger",style: TextStyle(fontSize: normalFontSize),)),
+            ],
+          ) :  SingleChildScrollView(
             child: Container(
                   margin: const EdgeInsets.all(10.0),
                   child: ListView.builder(
@@ -68,33 +82,33 @@ class _AllBlogsState extends State<AllBlogs> {
                               children: <Widget>[
                                 Row(
                                   children: <Widget>[
-                                         Expanded(flex:4 , child: Text(allBlogs[index]["user"]["fullName"].toString(),style: TextStyle(fontSize: 18))),
-                                         SizedBox(width:20),
-                                         Expanded(flex:2,child: Text(allBlogs[index]["blogTime"],style: TextStyle(fontSize: 15))),
+                                         Expanded(flex:4 , child: Text(allBlogs[index]["user"]["fullName"].toString(),style: TextStyle(fontSize: fullNameSize,color: Colors.black,fontWeight: FontWeight.w800))),
+                                         SizedBox(width:normalFontSize),
+                                         Expanded(flex:2,child: Text(allBlogs[index]["blogTime"],style: TextStyle(fontSize: blogTimeAndCompany))),
                                        ],
                                 ),
                                 Row(
                                   children: <Widget>[
-                                  Expanded(flex:4 , child: Text(allBlogs[index]["user"]["companyName"].toString(),style: TextStyle(fontSize: 15))),
+                                  Expanded(flex:4 , child: Text(allBlogs[index]["user"]["companyName"].toString(),style: TextStyle(fontSize: blogTimeAndCompany))),
                                   ]
                                 ),
-                                SizedBox(height:20),
+                                SizedBox(height:normalFontSize),
                                 Row(
                                    children:<Widget>[
-                                     Flexible(child: Text(allBlogs[index]["description"],style: TextStyle(fontSize: 20),overflow: TextOverflow.ellipsis,maxLines: 10,)),
+                                     Flexible(child: Text(allBlogs[index]["description"],style: TextStyle(fontSize: normalFontSize,color: Colors.black54),overflow: TextOverflow.ellipsis,maxLines: 10,)),
                                   ]
                                 ),
-                                SizedBox(height:10),
+                                SizedBox(height:sizedHeightMinHeight),
                                 // Divider( color: Colors.grey[800],),
                                 Row(
                                     children:<Widget>[
-                                     Text(allBlogs[index]["likes"].toString() ,style: TextStyle(fontSize: 15)),
-                                      IconButton(icon: Icon(Icons.favorite,size: 30,color: Colors.red,), onPressed: () {
+                                     Text(allBlogs[index]["likes"].toString() ,style: TextStyle(fontSize: blogTimeAndCompany)),
+                                      IconButton(icon: Icon(allBlogs[index]["likes"] == 0 ? Icons.favorite_border : Icons.favorite,size: sizedBoxNormalHeight,color: Colors.red,), onPressed: () {
                                         blogLikeFunction(allBlogs[index]["likes"],allBlogs[index]["description"],allBlogs[index]["blogId"],allBlogs[index]["user"]["userId"],allBlogs[index]["blogTime"]);
                                       },),
-                                      SizedBox(width: 120,),
+                                      SizedBox(width: sizedBoxWidthMAx,),
                                       Text('Comments'),
-                                      IconButton(icon: Icon(Icons.comment,size: 30,), onPressed: () { showComments(allBlogs[index]["blogId"]); },)
+                                      IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,), onPressed: () { showComments(allBlogs[index]["blogId"]); },)
                                       ]
                                 )
                               ]
@@ -112,14 +126,13 @@ class _AllBlogsState extends State<AllBlogs> {
     );
   }
   blogLikeFunction(likes,description,blogId,userId,blogTime)async{
-    print("previous like is $likes");
+
     setState(() {
       likes= likes+1;
     });
-    print("after increment like is $likes");
-    print('clicked to like blog id,userid,desc,blog time and like is $blogId, $userId, $description,$blogTime, $likes');
-    await put(Uri.parse(
-        "https://blogger-mobile.herokuapp.com/blogs"),
+    //Implementing Like functionality by updating count value of Like
+     await put(Uri.parse(
+        "https://bloggers-mobile.herokuapp.com/blogs"),
         headers: {
         "content-type": "application/json",
         "accept": "application/json",
@@ -135,7 +148,7 @@ class _AllBlogsState extends State<AllBlogs> {
         }
     )
     ).then((value) => {
-      print("data after like is ${value.body}"),
+      //Navigate to dashboard
       Navigator.pushAndRemoveUntil(
           context, MaterialPageRoute(
           builder: (context) => Dashboard()),
@@ -145,7 +158,7 @@ class _AllBlogsState extends State<AllBlogs> {
 
   }
   showComments(id){
-    print('selected comment id is $id');
+    //open show comment page to see all comments
     Navigator.push(context, MaterialPageRoute(builder: (context) => AddComments(blogId:id)));
   }
 }

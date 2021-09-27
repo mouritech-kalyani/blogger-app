@@ -1,10 +1,7 @@
-import 'dart:convert';
-import 'package:bloggers/pages/people.dart';
-import 'package:bloggers/pages/profile.dart';
+import 'package:bloggers/pages/people/people.dart';
+import 'package:bloggers/pages/profile/myprofile/profile.dart';
 import 'package:flutter/material.dart';
-import 'allblogs.dart';
-import 'myblogs.dart';
-import 'package:flutter_session/flutter_session.dart';
+import '../blogs/allblogs/allblogs.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard();
@@ -15,7 +12,6 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   List allBlogs=[];
-  // dynamic sessionUid;
   bool isLoading=true;
   @override
   Widget build(BuildContext context) {
@@ -23,16 +19,22 @@ class _DashboardState extends State<Dashboard> {
       length: 3,
       child: Scaffold(
         bottomNavigationBar: new Material(
-          color:Colors.blueAccent,
+          color:Colors.deepOrangeAccent,
+          shadowColor: Colors.orangeAccent,
+          //Show tab bar for Blogs,Users and My Profile
           child: TabBar(
+            indicatorColor: Colors.white,
             tabs:<Widget> [
               Tab(
+                icon:Icon(Icons.file_copy,color: Colors.white,),
                 text: "All Blogs",
               ),
               Tab(
+                icon:Icon(Icons.people,color: Colors.white,),
                   text: "People",
               ),
               Tab(
+                icon:Icon(Icons.account_circle,color: Colors.white),
                 text: "My Profile",
               )
             ],
