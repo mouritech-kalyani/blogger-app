@@ -136,7 +136,7 @@ class _AddCommentsState extends State<AddComments> {
               },
                 child: Text('Comment',style: TextStyle(fontSize: normalFontSize),)
               )),
-              
+
             ],
           ),
         )):
