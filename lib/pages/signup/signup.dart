@@ -249,10 +249,11 @@ class _SignUpState extends State<SignUp> {
       ).then((result) => {
         if(result.body != ""){
           setState((){
-              userId=result.body.substring(10,12);
+            userId=result.body.substring(10,12);
               isLoading = false;
           }),
           userIdd=int.parse(userId),
+          print("userid is $userId"),
            setUserSession(),
           Fluttertoast.showToast(
             msg: "$registrationSuccess",

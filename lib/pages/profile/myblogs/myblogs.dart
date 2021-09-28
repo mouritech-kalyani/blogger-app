@@ -163,13 +163,13 @@ getMyBlogs()async{
       );
       Widget continueButton = TextButton(
         child: Text("Yes"),
-        onPressed:  ()  {
+        onPressed:  ()  async {
           //Delete blog by passing blogId
           Navigator.pop(context);
           setState(() {
             isLoading=true;
           });
-           delete(Uri.parse(
+          await delete(Uri.parse(
                "$allBlogsApi/$blogId"),
                headers: {
              "content-type": "application/json",

@@ -31,8 +31,8 @@ class _AddCommentsState extends State<AddComments> {
   var profilePic;
   @override
   void initState() {
-    getComments();
     super.initState();
+    getComments();
   }
   getComments()async{
     setState(() {
@@ -111,7 +111,9 @@ class _AddCommentsState extends State<AddComments> {
               SizedBox(height: normalFontSize,),
               Text(commentError,style: TextStyle(fontSize: normalFontSize,color:Colors.red,),),
               SizedBox(height: normalFontSize,),
-              ElevatedButton(
+              Center(
+                child: isLoadingComment? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: radiusCircle,) :
+                ElevatedButton(
                   style: ButtonStyle(
                       padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50,20,50,20)),
                       backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
@@ -133,9 +135,8 @@ class _AddCommentsState extends State<AddComments> {
                   );
               },
                 child: Text('Comment',style: TextStyle(fontSize: normalFontSize),)
-              ),
-
-
+              )),
+              
             ],
           ),
         )):
