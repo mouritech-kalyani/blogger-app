@@ -41,7 +41,7 @@ class _SignUpState extends State<SignUp> {
       appBar: AppBar(
         title: Row(
           children: [
-            Text('Sign Up',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
+            Text('Sign up',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
             IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
           ],
         ),
@@ -193,15 +193,6 @@ class _SignUpState extends State<SignUp> {
                       },
                     ),
                     Text('$passwordError',style: TextStyle(color: Colors.red,fontSize: 15)),
-
-                    SizedBox(height: 20),
-                    GestureDetector(
-                      //If account is already there then do sign in
-                      child: Center(child: Text('$accountIs', style: TextStyle(decoration: TextDecoration.underline,color: Colors.deepOrangeAccent,fontSize: 20))),
-                      onTap: (){
-                        Navigator.pushNamed(context, '/signin');
-                      },
-                    ),
                     SizedBox(height: 20),
                     Center(
                       child: isLoading? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: 40.0,) :
@@ -249,7 +240,7 @@ class _SignUpState extends State<SignUp> {
                               },
                           // logInSuccess(context);
                           // Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard(username:username,password:password)));
-                          child: Text('Sign Up',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 20),),
+                          child: Text('Sign up',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 20),),
                           style: ButtonStyle(
                               padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50,20,50,20)),
                             backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
@@ -264,6 +255,28 @@ class _SignUpState extends State<SignUp> {
                         // ButtonStyle(
                         //     backgroundColor: MaterialStateProperty.all(Colors.pinkAccent),
                         // ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            //If account is already there then do sign in
+                            child: Center(child: Text('$accountIs', style: TextStyle(color: Colors.black38,fontSize: normalFontSize))),
+                            onTap: (){
+                              Navigator.pushNamed(context, '/signin');
+                            },
+                          ),
+                          GestureDetector(
+                            //If account is already there then do sign in
+                            child: Center(child: Text('$signInHere', style: TextStyle(color: Colors.deepOrangeAccent,fontSize: normalFontSize))),
+                            onTap: (){
+                              Navigator.pushNamed(context, '/signin');
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ],
