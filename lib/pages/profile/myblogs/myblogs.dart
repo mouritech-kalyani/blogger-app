@@ -119,11 +119,11 @@ getMyBlogs()async{
                               SizedBox(height: sizedHeightMinHeight,),
                               Row(
                                   children:<Widget>[
-                                    Expanded(flex:3,child: Text(userBlogs[index]["likes"].toString(),style: TextStyle(fontSize: normalFontSize))),
-                                    Expanded(flex:1,child: IconButton(onPressed: null, icon: Icon(userBlogs[index]["likes"] == 0 ? Icons.favorite_outline_rounded : Icons.favorite,color: Colors.red,size: sizedBoxNormalHeight,))),
-                                    SizedBox(width: 190,),
+                                    Expanded(flex:1,child: Text(userBlogs[index]["likes"].toString(),style: TextStyle(fontSize: normalFontSize))),
+                                    Expanded(flex:3,child: IconButton(onPressed: null, icon: Icon(userBlogs[index]["likes"] == 0 ? Icons.favorite_outline_rounded : Icons.favorite,color: Colors.red,size: sizedBoxNormalHeight,))),
+                                    SizedBox(width: sizedBoxWidthMAx,),
                                     Expanded(flex:8,child: Text('Comments')),
-                                    Expanded(flex:5,child: IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,), onPressed: () { showComments(userBlogs[index]["blogId"]); },))
+                                    Expanded(flex:4,child: IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,), onPressed: () { showComments(userBlogs[index]["blogId"]); },))
                                   ]
                               ),
                             ]

@@ -162,40 +162,38 @@ class _AddCommentsState extends State<AddComments> {
 
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(10,10,10,10),
-                        child: Expanded(
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    allComments[index]["user"]["profilePic"] == null ?  CircleAvatar(backgroundImage: AssetImage('assets/nodp.png'),): CircleAvatar(backgroundImage: FileImage(File(allComments[index]["user"]["profilePic"])),radius: normalFontSize,),
-                                    SizedBox(width:sizedHeightMinHeight),
-                                    Text(allComments[index]["user"]["fullName"].toString(),style: TextStyle(fontSize: fullNameSize,fontWeight: FontWeight.w800,color:Colors.black54)),
-                                    SizedBox(width:sizeWidth),
-                                    Text(allComments[index]["commentTime"],style: TextStyle(fontSize: blogTimeAndCompany)),
-                                  ],
-                                ),
-                                SizedBox(height: sizedHeightMinHeight,),
-                                Row(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(50,0,0,0),
-                                        child: Text(allComments[index]["user"]["companyName"].toString(),style: TextStyle(fontSize: blogTimeAndCompany)),
-                                      ),
-                                    ]
-                                ),
-                                SizedBox(height:normalFontSize),
-                                Row(
-
-                                    children:<Widget>[
-                                      Text("Comment : "),
-                                      Flexible(child: Text(allComments[index]["commentDescription"],style: TextStyle(fontSize: fullNameSize,color: Colors.black54),overflow: TextOverflow.ellipsis,maxLines: 10,)),
-                                    ]
-                                ),
-                                SizedBox(height:sizedHeightMinHeight),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  allComments[index]["user"]["profilePic"] == null ?  CircleAvatar(backgroundImage: AssetImage('assets/nodp.png'),): CircleAvatar(backgroundImage: FileImage(File(allComments[index]["user"]["profilePic"])),radius: normalFontSize,),
+                                  SizedBox(width:sizedHeightMinHeight),
+                                  Text(allComments[index]["user"]["fullName"].toString(),style: TextStyle(fontSize: fullNameSize,fontWeight: FontWeight.w800,color:Colors.black54)),
+                                  SizedBox(width:sizeWidth),
+                                  Text(allComments[index]["commentTime"],style: TextStyle(fontSize: blogTimeAndCompany)),
                                 ],
-                                ),
-                        ),
+                              ),
+                              SizedBox(height: sizedHeightMinHeight,),
+                              Row(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(50,0,0,0),
+                                      child: Text(allComments[index]["user"]["companyName"].toString(),style: TextStyle(fontSize: blogTimeAndCompany)),
+                                    ),
+                                  ]
+                              ),
+                              SizedBox(height:normalFontSize),
+                              Row(
+
+                                  children:<Widget>[
+                                    Text("Comment : "),
+                                    Flexible(child: Text(allComments[index]["commentDescription"],style: TextStyle(fontSize: fullNameSize,color: Colors.black54),overflow: TextOverflow.ellipsis,maxLines: 10,)),
+                                  ]
+                              ),
+                              SizedBox(height:sizedHeightMinHeight),
+                              ],
+                              ),
 
                         ),
                       ),
