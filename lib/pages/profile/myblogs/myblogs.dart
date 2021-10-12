@@ -33,7 +33,7 @@ getMyBlogs()async{
     userIdFromSession=sessionUid;
   });
   //By passing current user id get all blogs of current user
-  await get(Uri.parse("$allUsers/$sessionUid"),
+  await get(Uri.parse("$usersData/$sessionUid"),
       headers: {
       "content-type": "application/json",
       "accept": "application/json",
@@ -64,11 +64,14 @@ getMyBlogs()async{
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('My Blogs',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
-          backgroundColor:Colors.deepOrangeAccent,
-          leading: GestureDetector(
-            child: Image.asset("$appIcon",color: Colors.white,),
+          title: Row(
+            children: [
+              Text('My Blogs',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
+              IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
+            ],
           ),
+          backgroundColor:Colors.deepOrangeAccent,
+
         ),
       body: Container(
           child: isLoading ? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: fadingCircleSize,):
@@ -116,11 +119,11 @@ getMyBlogs()async{
                               SizedBox(height: sizedHeightMinHeight,),
                               Row(
                                   children:<Widget>[
-                                    Text(userBlogs[index]["likes"].toString(),style: TextStyle(fontSize: normalFontSize)),
-                                    IconButton(onPressed: null, icon: Icon(userBlogs[index]["likes"] == 0 ? Icons.favorite_outline_rounded : Icons.favorite,color: Colors.red,size: sizedBoxNormalHeight,)),
+                                    Expanded(flex:3,child: Text(userBlogs[index]["likes"].toString(),style: TextStyle(fontSize: normalFontSize))),
+                                    Expanded(flex:1,child: IconButton(onPressed: null, icon: Icon(userBlogs[index]["likes"] == 0 ? Icons.favorite_outline_rounded : Icons.favorite,color: Colors.red,size: sizedBoxNormalHeight,))),
                                     SizedBox(width: 190,),
-                                    Text('Comments'),
-                                    IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,), onPressed: () { showComments(userBlogs[index]["blogId"]); },)
+                                    Expanded(flex:8,child: Text('Comments')),
+                                    Expanded(flex:5,child: IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,), onPressed: () { showComments(userBlogs[index]["blogId"]); },))
                                   ]
                               ),
                             ]

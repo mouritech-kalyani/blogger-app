@@ -53,13 +53,16 @@ class _AddBlogState extends State<AddBlog> {
     return Scaffold(
       //App bar description
       appBar: AppBar(
-        title: Text('Add Your Blogs',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
+        title: Row(
+          children: [
+            Text('Add Blogs',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
+            IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
+          ],
+        ),
         backgroundColor:Colors.deepOrangeAccent,
         elevation: 0.0,
         shadowColor: Colors.orangeAccent,
-        leading: GestureDetector(
-          child: Image.asset(appIcon,color: Colors.white,),
-        ),
+
       ),
       //Body of add blog page
       body: Container(
@@ -67,7 +70,10 @@ class _AddBlogState extends State<AddBlog> {
           padding: const EdgeInsets.all(10.0),
           child: Column(
           children: [
-            Center(child: Text("$blogDesc",style: TextStyle(fontSize: normalFontSize,fontWeight: FontWeight.bold),)),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Center(child: Text("$blogDesc",style: TextStyle(fontSize: normalFontSize,fontWeight: FontWeight.bold,color:Colors.black54),)),
+            ),
             SizedBox(height:30),
 
             //Check whether user is adding or editing the blog
@@ -77,6 +83,9 @@ class _AddBlogState extends State<AddBlog> {
                 focusedBorder: OutlineInputBorder(
                       borderSide: new BorderSide(color: blogError == "" ? Colors.black12 : Colors.red)
                   ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color:blogError == ""  ? Colors.black12 : Colors.red),
+                ),
                 border:OutlineInputBorder(),
                   hintText: '$startBlog',
                   labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black54),
@@ -104,6 +113,9 @@ class _AddBlogState extends State<AddBlog> {
               decoration: InputDecoration(
                 focusedBorder: OutlineInputBorder(
                     borderSide: new BorderSide(color: blogError == "" ? Colors.black12 : Colors.red)
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color:blogError == ""  ? Colors.black12 : Colors.red),
                 ),
                 border:OutlineInputBorder(),
                 hintText: "$startBlog",

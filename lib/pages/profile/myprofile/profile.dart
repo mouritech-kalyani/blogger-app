@@ -108,11 +108,13 @@ class _MyProfileState extends State<MyProfile> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Profile',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
-        backgroundColor:Colors.deepOrangeAccent,
-        leading: GestureDetector(
-          child: Image.asset("$appIcon",color: Colors.white,),
+        title: Row(
+          children: [
+            Text('My Profile',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
+            IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
+          ],
         ),
+        backgroundColor:Colors.deepOrangeAccent,
         actions: [
           IconButton(onPressed: (){
             //Confirmation for Delete account
@@ -195,7 +197,7 @@ class _MyProfileState extends State<MyProfile> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(0.0),
               child: Container(
                   height: containerHeight,
                   width: containerWidth,
@@ -212,7 +214,7 @@ class _MyProfileState extends State<MyProfile> {
                     backgroundImage:AssetImage('$noDpImage'),radius: fadingCircleSize,
                       child: IconButton(
                           icon: Icon(Icons.camera_alt_rounded,size: radiusCircle,),
-                          color: Colors.black,
+                          color: Colors.black54,
                           onPressed: () { getImage(); },
                           padding: EdgeInsets.fromLTRB(110, 50, 0, 0)),
                   ):
@@ -220,12 +222,12 @@ class _MyProfileState extends State<MyProfile> {
                      backgroundImage: FileImage(File(profilePic)),radius: fadingCircleSize,
                           child: IconButton(
                               icon: Icon(Icons.camera_alt_rounded,size: radiusCircle,),
-                              color: Colors.black,
+                              color: Colors.black54,
                               onPressed: () { getImage(); },
                               padding: EdgeInsets.fromLTRB(110, 50, 0, 0)),
                         ),
                         SizedBox(height:sizedBoxNormalHeight),
-                        Text('$username', style: TextStyle(fontSize: appBarTitle,fontWeight: FontWeight.bold,color: Colors.black)),
+                        Text('$username', style: TextStyle(fontSize: appBarTitle,fontWeight: FontWeight.bold,color: Colors.black87)),
 
                       ],
                     ),
@@ -248,12 +250,12 @@ class _MyProfileState extends State<MyProfile> {
                                   topLeft: Radius.circular(sizedHeightMinHeight),
                                   bottomLeft: Radius.circular(sizedHeightMinHeight)
                               ),
-                              side: BorderSide(width: 3, color: Colors.black12)),
+                              side: BorderSide(width: 3, color: Colors.orangeAccent)),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Column(
                               children: [
-                                Text("$followers",style: TextStyle(fontSize: sizedBoxNormalHeight,fontWeight: FontWeight.bold),),
+                                Text("$followers",style: TextStyle(fontSize: sizedBoxNormalHeight,fontWeight: FontWeight.bold,color: Colors.deepOrangeAccent),),
                                 Text("Followers",style: TextStyle(fontSize: blogTimeAndCompany),)
                               ],
                             ),
@@ -267,12 +269,12 @@ class _MyProfileState extends State<MyProfile> {
                                   topLeft: Radius.circular(sizedHeightMinHeight),
                                   bottomLeft: Radius.circular(sizedHeightMinHeight)
                               ),
-                              side: BorderSide(width: 3, color: Colors.black12)),
+                              side: BorderSide(width: 3, color: Colors.orangeAccent)),
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(25,10,25,10),
                             child: Column(
                               children: [
-                                Text("$blogCount",style: TextStyle(fontSize: sizedBoxNormalHeight,fontWeight: FontWeight.bold),),
+                                Text("$blogCount",style: TextStyle(fontSize: sizedBoxNormalHeight,fontWeight: FontWeight.bold,color:Colors.deepOrangeAccent),),
                                 //Icon(Icons.people,size: 40),
                                 Text("Blogs",style: TextStyle(fontSize: blogTimeAndCompany),)
                               ],
@@ -287,12 +289,12 @@ class _MyProfileState extends State<MyProfile> {
                                   topLeft: Radius.circular(sizedHeightMinHeight),
                                   bottomLeft: Radius.circular(sizedHeightMinHeight)
                               ),
-                              side: BorderSide(width: 3, color: Colors.black12)),
+                              side: BorderSide(width: 3, color: Colors.orangeAccent)),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Column(
                               children: [
-                                Text("$following",style: TextStyle(fontSize: sizedBoxNormalHeight,fontWeight: FontWeight.bold),),
+                                Text("$following",style: TextStyle(fontSize: sizedBoxNormalHeight,fontWeight: FontWeight.bold,color:Colors.deepOrangeAccent),),
                                 Text("Following",style: TextStyle(fontSize: blogTimeAndCompany),)
                               ],
                             ),
@@ -304,106 +306,124 @@ class _MyProfileState extends State<MyProfile> {
                 ],
             ),
             SizedBox(height: 20,),
-            Container(
-              height: containerHeight,
-              width: sizedBoxWidthMAx,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                      initialValue: fullName,
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(sizedHeightMinHeight),
+                        topRight: Radius.circular(sizedHeightMinHeight),
+                        topLeft: Radius.circular(sizedHeightMinHeight),
+                        bottomLeft: Radius.circular(sizedHeightMinHeight)
+                    ),
+                    side: BorderSide(width: 1, color: Colors.orangeAccent)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextFormField(
+                            initialValue: fullName,
+                            enabled: isEditable,
+                            keyboardType: TextInputType.text,
+                            onChanged: (e){setState(() {
+                              fullNameEdit=e;
+                            });
+                            },
+                            style: TextStyle(fontSize: normalFontSize,)
+                        ),
+                        Padding(
+                      padding: const EdgeInsets.fromLTRB(5,0,0,0),
+                      child: TextFormField(
+                      initialValue: password,
+                      obscureText: !showPassword,
+                      decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          icon: Visibility(
+                            visible: isEditable,
+                            child: Icon(
+                              Icons.remove_red_eye,
+                              color: this.showPassword ? Colors.blue : Colors.grey,
+                            ),
+                          ),
+                          onPressed: () {
+                              setState(() => this.showPassword = !this.showPassword);
+
+                          },
+                        )
+                      ),
                       enabled: isEditable,
                       keyboardType: TextInputType.text,
                       onChanged: (e){setState(() {
-                        fullNameEdit=e;
+                      if(e.length !=8 ){
+                      setState(() {
+                      passwordError="$validatePassword";
+                       });
+                      }else{
+                       setState(() {
+                      passwordEdit=e;
+                      passwordError='';
+                      });
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      }
+                      });
+                     },
+                      style: TextStyle(fontSize: normalFontSize)
+                      ),
+                      ),
+                        //Text("$passwordError",style: TextStyle(color: Colors.red)),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5,0,0,0),
+                      child: TextFormField(
+                      initialValue: companyName,
+                      enabled: isEditable,
+                      keyboardType: TextInputType.text,
+                       onChanged: (e){setState(() {
+                      companyNameEdit=e;
                       });
                       },
-                      style: TextStyle(fontSize: normalFontSize,)
-                  ),
-                  Padding(
-                padding: const EdgeInsets.fromLTRB(5,0,0,0),
-                child: TextFormField(
-                initialValue: password,
-                obscureText: !showPassword,
-                decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      Icons.remove_red_eye,
-                      color: this.showPassword ? Colors.blue : Colors.grey,
+                      style: TextStyle(fontSize: normalFontSize)
+                      ),
+                      ),
+                    Padding(
+                       padding: const EdgeInsets.fromLTRB(10,10,10,10),
+                      child: isLoading ? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: radiusCircle,) :ElevatedButton(onPressed: (){
+                       if(isEditable){
+                      saveDetails(context);
+                      }
+                      else{
+                      setState(() {
+                      isEditable=!isEditable;
+                      });
+                      }
+                     },
+                      style: ButtonStyle(
+                      padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(40,10,40,10)),
+                      backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
+
+                      ),
+                      child: isEditable ? Text('Save Record',style: TextStyle(fontSize: 17,fontWeight: FontWeight.w700),):Text('Edit Record',style: TextStyle(fontSize: 17,fontWeight: FontWeight.w700))),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10,10,10,10),
+                      child: ElevatedButton(onPressed:
+                        () {
+                        //Move to see logged in user blogs
+                        Navigator.pushNamed(context, '/myblogs');
+                        },
+                        style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50,10,50,10)),
+                        backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
+
+                         ),
+                        child: Text("My Blogs",style: TextStyle(fontSize: 17,fontWeight: FontWeight.w700))),
                     ),
-                    onPressed: () {
-                      setState(() => this.showPassword = !this.showPassword);
-                    },
-                  )
-                ),
-                enabled: isEditable,
-                keyboardType: TextInputType.text,
-                onChanged: (e){setState(() {
-                if(e.length !=8 ){
-                setState(() {
-                passwordError="$validatePassword";
-                 });
-                }else{
-                 setState(() {
-                passwordEdit=e;
-                passwordError='';
-                });
-                FocusScope.of(context).requestFocus(FocusNode());
-                }
-                });
-               },
-                style: TextStyle(fontSize: normalFontSize)
-                ),
-                ),
-                  //Text("$passwordError",style: TextStyle(color: Colors.red)),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(5,0,0,0),
-                child: TextFormField(
-                initialValue: companyName,
-                enabled: isEditable,
-                keyboardType: TextInputType.text,
-                 onChanged: (e){setState(() {
-                companyNameEdit=e;
-                });
-                },
-                style: TextStyle(fontSize: normalFontSize)
-                ),
-                ),
-              Padding(
-                 padding: const EdgeInsets.fromLTRB(10,10,10,10),
-                child: isLoading ? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: radiusCircle,) :ElevatedButton(onPressed: (){
-                 if(isEditable){
-                saveDetails(context);
-                }
-                else{
-                setState(() {
-                isEditable=!isEditable;
-                });
-                }
-               },
-                style: ButtonStyle(
-                padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(40,10,40,10)),
-                backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
 
-                ),
-                child: isEditable ? Text('Save Record',style: TextStyle(fontSize: 17,fontWeight: FontWeight.w700),):Text('Edit Record',style: TextStyle(fontSize: 17,fontWeight: FontWeight.w700))),
-                ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10,10,10,10),
-                child: ElevatedButton(onPressed:
-                  () {
-                  //Move to see logged in user blogs
-                  Navigator.pushNamed(context, '/myblogs');
-                  },
-                  style: ButtonStyle(
-                  padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50,10,50,10)),
-                  backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
+                      ],
+                    ),
+                  ),
 
-                   ),
-                  child: Text("My Blogs",style: TextStyle(fontSize: 17,fontWeight: FontWeight.w700))),
-              ),
-
-                ],
               ),
             )
           ],
@@ -471,7 +491,7 @@ class _MyProfileState extends State<MyProfile> {
           });
         }
         //Update user data
-        await put(Uri.parse("$allUsers"),
+        await put(Uri.parse("$usersData"),
             headers: {
               "content-type": "application/json",
               "accept": "application/json",

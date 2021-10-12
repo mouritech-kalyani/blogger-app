@@ -35,11 +35,16 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign In',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
-        backgroundColor:Colors.deepOrangeAccent,
-        leading: GestureDetector(
-          child: Image.asset("$appIcon",color: Colors.white,),
+        title: Row(
+          children: [
+            Text('Sign In',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
+            IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
+          ],
         ),
+        backgroundColor:Colors.deepOrangeAccent,
+        // leading: GestureDetector(
+        //   child: Image.asset("$appIcon",color: Colors.white,),
+        // ),
       ),
 
       //body of sign in page to get valid username & password from user
@@ -47,115 +52,167 @@ class _SignInState extends State<SignIn> {
       body: SingleChildScrollView(
         child: Container(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: normalFontSize),
-                TextField(
-                  decoration: InputDecoration(
-                    focusedBorder : OutlineInputBorder(
-                        borderSide: BorderSide(color: emailError == "" ? Colors.black12 : Colors.red)
-                    ),
-                    border:OutlineInputBorder(),
-                    hintText: '$userNamePlaceholder',
-                    labelText: "Email/Username",
-                    labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black54),
+            padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(sizedHeightMinHeight),
+                      topRight: Radius.circular(sizedHeightMinHeight),
+                      topLeft: Radius.circular(sizedHeightMinHeight),
+                      bottomLeft: Radius.circular(sizedHeightMinHeight)
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                  onChanged: (txt){
-                  if(!emailValid.hasMatch(txt)){
-                    setState(() {
-                      emailError='$validateError';
-                    });
-                  }else{setState(() {
-                    emailError='';
-                    email=txt;
-                  });}
-                  },
-                ),
-                //show email error if it is invalid
-                Text('$emailError',style: TextStyle(color: Colors.red,fontSize: blogTimeAndCompany)),
-                SizedBox(height: normalFontSize),
-                TextField(
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: passwordError == "" ? Colors.black12 : Colors.red)
-                    ),
-                    border:OutlineInputBorder(),
-                    hintText: '$passwordPlaceholder',
-                    labelText: "Password",
-                    labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black54),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        Icons.remove_red_eye,
-                        color: this._showPassword ? Colors.blue : Colors.grey,
+                  side: BorderSide(width: 1, color: Colors.orangeAccent)),
+
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: normalFontSize),
+                    TextField(
+                      decoration: new InputDecoration(
+                        focusedBorder : OutlineInputBorder(
+                          borderSide: BorderSide(color:(emailError == requiredCurrentField || emailError == validateError) ? Colors.red : Colors.black12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color:(emailError == requiredCurrentField || emailError == validateError) ? Colors.red : Colors.black12),
+                        ),
+                        hintText: '$userNamePlaceholder',
+                        labelText: "Email/Username",
+                        labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black54),
                       ),
-                      onPressed: () {
-                        setState(() => this._showPassword = !this._showPassword);
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged: (txt){
+                      if(!emailValid.hasMatch(txt)){
+                        setState(() {
+                          emailError='$validateError';
+                        });
+                      }else{setState(() {
+                        emailError='';
+                        email=txt;
+                      });}
                       },
                     ),
-                  ),
-                  obscureText: !this._showPassword,
-                  onChanged: (txt){
-                    if(txt.length !=8){
-                      setState(() {
-                        passwordError="$validatePassword";
-                      });
-                    }else{
-                      setState(() {
-                        password=txt;
-                        passwordError='';
-                      });
-                      FocusScope.of(context).requestFocus(FocusNode());
-                    }
-                  },
-                ),
-                //show password error if it is invalid
-                Text('$passwordError',style: TextStyle(color: Colors.red,fontSize: blogTimeAndCompany)),
-                SizedBox(height: normalFontSize),
-                GestureDetector(
-                  //if account not there then sign up
-
-                  child: Center(child: Text("$noAccount", style: TextStyle(decoration: TextDecoration.underline,color: Colors.deepOrangeAccent,fontSize: normalFontSize))),
-                  onTap: (){
-                    Navigator.pushNamed(context, '/signup');
-                  },
-                ),
-                SizedBox(height: normalFontSize),
-                Center(
-                  child: isLoading? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: radiusCircle,) :
-                  ElevatedButton(
-                      onPressed: (){
-                        //if form error the show on toast
-                        if(email .isEmpty || password.isEmpty){
+                    //show email error if it is invalid
+                    Text('$emailError',style: TextStyle(color: Colors.red,fontSize: blogTimeAndCompany)),
+                    SizedBox(height: normalFontSize),
+                    TextField(
+                      decoration: InputDecoration(
+                        focusedBorder : OutlineInputBorder(
+                          borderSide: BorderSide(color:(passwordError == requiredCurrentField || passwordError == validatePassword) ? Colors.red : Colors.black12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color:(passwordError == requiredCurrentField || passwordError == validatePassword) ? Colors.red : Colors.black12),
+                        ),
+                        hintText: '$passwordPlaceholder',
+                        labelText: "Password",
+                        labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black54),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            Icons.remove_red_eye,
+                            color: this._showPassword ? Colors.blue : Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() => this._showPassword = !this._showPassword);
+                          },
+                        ),
+                      ),
+                      obscureText: !this._showPassword,
+                      onChanged: (txt){
+                        if(txt.length !=8){
                           setState(() {
-                            logError="$requiredFilled";
+                            passwordError="$validatePassword";
                           });
-                          Fluttertoast.showToast(
-                            msg: logError,
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 1,
-                          );
-                        }else {
-                          signInFunction();
+                        }else{
+                          setState(() {
+                            password=txt;
+                            passwordError='';
+                          });
+                          FocusScope.of(context).requestFocus(FocusNode());
                         }
                       },
-                      child: Text('Sign In',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: normalFontSize),),
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50,20,50,20)),
-                        backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(sizedHeightMinHeight)
+                    ),
+                    //show password error if it is invalid
+                    Text('$passwordError',style: TextStyle(color: Colors.red,fontSize: blogTimeAndCompany)),
+                    SizedBox(height: normalFontSize),
+                    GestureDetector(
+                      //if account not there then sign up
+
+                      child: Center(child: Text("$noAccount", style: TextStyle(decoration: TextDecoration.underline,color: Colors.deepOrangeAccent,fontSize: normalFontSize))),
+                      onTap: (){
+                        Navigator.pushNamed(context, '/signup');
+                      },
+                    ),
+                    SizedBox(height: normalFontSize),
+                    Center(
+                      child: isLoading? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: radiusCircle,) :
+                      ElevatedButton(
+                          onPressed: (){
+                            //if form error the show on toast
+                            if(email == '' && password == ''){
+                              setState(() {
+                                logError="$requiredField";
+                                emailError="$requiredCurrentField";
+                                passwordError="$requiredCurrentField";
+                              });
+                              Fluttertoast.showToast(
+                                msg: logError,
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                              );
+                            }else if(email.isEmpty || password.isEmpty){
+                              if(email.isEmpty){
+                                setState(() {
+                                  emailError="$requiredCurrentField";
+                                });
+                              }else{
+                                setState(() {
+                                  passwordError="$requiredCurrentField";
+                                });
+                              }
+                            }
+                            else {
+                              signInFunction();
+                            }
+                          },
+                          child: Text('Sign In',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: normalFontSize),),
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50,20,50,20)),
+                            backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(sizedHeightMinHeight)
+                                  )
                               )
                           )
-                      )
-                  ),
+                      ),
+                    ),
+                    SizedBox(height: normalFontSize,),
+                    GestureDetector(
+                      //if account not there then sign up
+
+                      child: Center(child: Text("$activateAccount", style: TextStyle(decoration: TextDecoration.underline,color: Colors.deepOrangeAccent,fontSize: normalFontSize))),
+                      onTap: (){
+                        Navigator.pushNamed(context, '/activateaccount');
+                      },
+                    ),
+                    SizedBox(height: normalFontSize,),
+                    GestureDetector(
+                      //if account not there then sign up
+
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(180, 0, 0, 0),
+                        child: Text("$forgotPassword", style: TextStyle(decoration: TextDecoration.underline,color: Colors.deepOrangeAccent,fontSize: blogTimeAndCompany)),
+                      ),
+                      onTap: (){
+                        Navigator.pushNamed(context, '/forgotpassword');
+                      },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

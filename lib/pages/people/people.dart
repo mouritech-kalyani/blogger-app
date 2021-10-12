@@ -25,10 +25,10 @@ class _PeopleState extends State<People> {
   bool isBlogLike=false;
   @override
   void initState() {
-    getWholeBlogs();
+    getAllPeople();
     super.initState();
   }
-  getWholeBlogs()async{
+  getAllPeople()async{
     //By passing logged in userId take all un follow users
 
     dynamic sessionUid= await FlutterSession().get("userId");
@@ -51,14 +51,23 @@ class _PeopleState extends State<People> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('People',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
-        backgroundColor:Colors.deepOrangeAccent,
-        leading: GestureDetector(
-          child: Image.asset("$appIcon",color: Colors.white,),
+        title: Row(
+          children: [
+            Text('People',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
+            IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
+          ],
         ),
+        backgroundColor:Colors.deepOrangeAccent,
       ),
       body: isLoading ?SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: fadingCircleSize,)
-          :SingleChildScrollView(
+          :allUsers.isEmpty ? Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(followedAll,height: 150,width:200),
+          SizedBox(height: 30,),
+          Center(child:Text("$followedAllUsers",style: TextStyle(fontSize: normalFontSize),)),
+        ],
+      ) :SingleChildScrollView(
           child: Container(
             margin: const EdgeInsets.all(10.0),
             child: ListView.builder(

@@ -18,7 +18,7 @@ class AllBlogs extends StatefulWidget {
 }
 
 class _AllBlogsState extends State<AllBlogs> {
-  List allBlogs=[];
+  var allBlogs=[];
   bool isLoading=true;
   var likes;
   bool isBlogLike=false;
@@ -48,11 +48,13 @@ class _AllBlogsState extends State<AllBlogs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('All Blogs',style: TextStyle(fontWeight: FontWeight.bold,fontSize: allBlogSize)),
-        backgroundColor:Colors.deepOrangeAccent,
-        leading: GestureDetector(
-          child: Image.asset("$appIcon",color: Colors.white),
+        title: Row(
+          children: [
+            Text('Blogs',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
+            IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
+          ],
         ),
+        backgroundColor:Colors.deepOrangeAccent,
       ),
           //Check whether data is in progress or not and blogs are empty or not
          // if user is not followed yet to blogger then there is no blog text
@@ -82,7 +84,7 @@ class _AllBlogsState extends State<AllBlogs> {
                               children: <Widget>[
                                 Row(
                                   children: <Widget>[
-                                         Expanded(flex:4 , child: Text(allBlogs[index]["user"]["fullName"].toString(),style: TextStyle(fontSize: fullNameSize,color: Colors.black,fontWeight: FontWeight.w800))),
+                                         Expanded(flex:4 , child: Text(allBlogs[index]["user"]["fullName"].toString(),style: TextStyle(fontSize: fullNameSize,color: Colors.black54,fontWeight: FontWeight.w800))),
                                          SizedBox(width:normalFontSize),
                                          Expanded(flex:2,child: Text(allBlogs[index]["blogTime"],style: TextStyle(fontSize: blogTimeAndCompany))),
                                        ],
@@ -102,13 +104,16 @@ class _AllBlogsState extends State<AllBlogs> {
                                 // Divider( color: Colors.grey[800],),
                                 Row(
                                     children:<Widget>[
-                                     Text(allBlogs[index]["likes"].toString() ,style: TextStyle(fontSize: blogTimeAndCompany)),
-                                      IconButton(icon: Icon(allBlogs[index]["likes"] == 0 ? Icons.favorite_border : Icons.favorite,size: sizedBoxNormalHeight,color: Colors.red,), onPressed: () {
-                                        blogLikeFunction(allBlogs[index]["likes"],allBlogs[index]["description"],allBlogs[index]["blogId"],allBlogs[index]["user"]["userId"],allBlogs[index]["blogTime"]);
-                                      },),
+                                     Expanded(flex: 3, child: Text(allBlogs[index]["likes"].toString() ,style: TextStyle(fontSize: blogTimeAndCompany))),
+                                      Expanded(
+                                        flex:1,
+                                        child: IconButton(icon: Icon(allBlogs[index]["likes"] == 0 ? Icons.favorite_border : Icons.favorite,size: sizedBoxNormalHeight,color: Colors.red,), onPressed: () {
+                                          blogLikeFunction(allBlogs[index]["likes"],allBlogs[index]["description"],allBlogs[index]["blogId"],allBlogs[index]["user"]["userId"],allBlogs[index]["blogTime"]);
+                                        },),
+                                      ),
                                       SizedBox(width: sizedBoxWidthMAx,),
-                                      Text('Comments'),
-                                      IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,), onPressed: () { showComments(allBlogs[index]["blogId"]); },)
+                                      Expanded(flex:8,child: Text('Comments')),
+                                      Expanded(flex:5,child: IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,), onPressed: () { showComments(allBlogs[index]["blogId"]); },))
                                       ]
                                 )
                               ]

@@ -66,18 +66,21 @@ class _AddCommentsState extends State<AddComments> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('All Comments',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
-        backgroundColor:Colors.deepOrangeAccent,
-        leading: GestureDetector(
-          child: Image.asset("$appIcon",color: Colors.white,),
+        title: Row(
+          children: [
+            Text('Add Comments',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
+            IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
+          ],
         ),
+        backgroundColor:Colors.deepOrangeAccent,
+
       ),
       //Check whether comments are present or not
       //if there are more than 1 comment for the blog then show comments or else show no comments message
       body: isLoading ? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: fadingCircleSize,):
         noComments ? SingleChildScrollView(
             child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 200, 10, 0),
+          padding: const EdgeInsets.fromLTRB(10, 150, 10, 0),
           child: Column(
             children: [
               Image.asset("$noBlogsIcon",height: 100,width:100),
@@ -89,6 +92,9 @@ class _AddCommentsState extends State<AddComments> {
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: commentError == "" ? Colors.black12 : Colors.red)
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color:commentError == ""  ? Colors.black12 : Colors.red),
                   ),
                   hintText: "$commentHintText",
                 ),
@@ -164,7 +170,7 @@ class _AddCommentsState extends State<AddComments> {
                                   children: <Widget>[
                                     allComments[index]["user"]["profilePic"] == null ?  CircleAvatar(backgroundImage: AssetImage('assets/nodp.png'),): CircleAvatar(backgroundImage: FileImage(File(allComments[index]["user"]["profilePic"])),radius: normalFontSize,),
                                     SizedBox(width:sizedHeightMinHeight),
-                                    Text(allComments[index]["user"]["fullName"].toString(),style: TextStyle(fontSize: fullNameSize,fontWeight: FontWeight.bold)),
+                                    Text(allComments[index]["user"]["fullName"].toString(),style: TextStyle(fontSize: fullNameSize,fontWeight: FontWeight.w800,color:Colors.black54)),
                                     SizedBox(width:sizeWidth),
                                     Text(allComments[index]["commentTime"],style: TextStyle(fontSize: blogTimeAndCompany)),
                                   ],
@@ -205,6 +211,9 @@ class _AddCommentsState extends State<AddComments> {
                    decoration: InputDecoration(
                      focusedBorder: OutlineInputBorder(
                          borderSide: new BorderSide(color: commentError == "" ? Colors.black12 : Colors.red)
+                     ),
+                     enabledBorder: OutlineInputBorder(
+                       borderSide: BorderSide(color:commentError == ""  ? Colors.black12 : Colors.red),
                      ),
                      border: OutlineInputBorder(),
                      hintText: "$commentHintText",

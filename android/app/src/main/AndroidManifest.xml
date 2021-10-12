@@ -2,7 +2,7 @@
     package="com.example.bloggers">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="bloggers"
+        android:label="Bloggers"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -26,7 +26,7 @@
                  Flutter's first frame. -->
             <meta-data
               android:name="io.flutter.embedding.android.SplashScreenDrawable"
-              android:resource="@drawable/splashimg"
+              android:resource="@drawable/bloggerimage"
                 />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
