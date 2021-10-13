@@ -137,16 +137,24 @@ class _SignInState extends State<SignIn> {
                         ),
                         //show password error if it is invalid
                         Text('$passwordError',style: TextStyle(color: Colors.red,fontSize: blogTimeAndCompany)),
-                        GestureDetector(
-                          //if account not there then sign up
-
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(210, 0, 0, 0),
-                            child: Text("$forgotPassword", style: TextStyle(color: Colors.black54,fontSize: blogTimeAndCompany)),
-                          ),
-                          onTap: (){
-                            Navigator.pushNamed(context, '/forgotpassword');
-                          },
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
+                              child: Text(''),
+                            ),
+                            GestureDetector(
+                              //if account not there then sign up
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(160, 0, 0, 0),
+                                child: Text("$forgotPassword", style: TextStyle(color: Colors.black54,fontSize: blogTimeAndCompany)),
+                              ),
+                              onTap: (){
+                                Navigator.pushNamed(context, '/forgotpassword');
+                              },
+                            ),
+                          ],
                         ),
                         SizedBox(height: normalFontSize),
                         Center(
@@ -208,29 +216,28 @@ class _SignInState extends State<SignIn> {
                   ),
                 ),
               ),
-              SizedBox(height: normalFontSize),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(100, 100, 0, 0),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      //if account not there then sign up
+              SizedBox(height: sizedBoxNormalHeight),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    //if account not there then sign up
 
-                      child: Center(child: Text("$noAccount", style: TextStyle(color: Colors.black38,fontSize: normalFontSize))),
-                      onTap: (){
-                        Navigator.pushNamed(context, '/signup');
-                      },
-                    ),
-                    GestureDetector(
-                      //if account not there then sign up
+                    child: Center(child: Text("$noAccount", style: TextStyle(color: Colors.black38,fontSize: normalFontSize))),
+                    onTap: (){
+                      Navigator.pushNamed(context, '/signup');
+                    },
+                  ),
+                  GestureDetector(
+                    //if account not there then sign up
 
-                      child: Center(child: Text("$signUpHere", style: TextStyle(color: Colors.deepOrangeAccent,fontSize: normalFontSize))),
-                      onTap: (){
-                        Navigator.pushNamed(context, '/signup');
-                      },
-                    ),
-                  ],
-                ),
+                    child: Center(child: Text("$signUpHere", style: TextStyle(color: Colors.deepOrangeAccent,fontSize: normalFontSize))),
+                    onTap: (){
+                      Navigator.pushNamed(context, '/signup');
+                    },
+                  ),
+                ],
               ),
             ],
           ),

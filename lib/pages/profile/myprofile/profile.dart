@@ -196,43 +196,40 @@ class _MyProfileState extends State<MyProfile> {
       SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: Container(
-                  height: containerHeight,
-                  width: containerWidth,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage("$bgProfile"), fit: BoxFit.cover),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(40.0),
-                    child: Column(
-                      children: [
-                    profilePic == null ?
-                    CircleAvatar(
-                    backgroundImage:AssetImage('$noDpImage'),radius: fadingCircleSize,
-                      child: IconButton(
-                          icon: Icon(Icons.camera_alt_rounded,size: radiusCircle,),
-                          color: Colors.black54,
-                          onPressed: () { getImage(); },
-                          padding: EdgeInsets.fromLTRB(110, 50, 0, 0)),
-                  ):
-                    CircleAvatar(
-                     backgroundImage: FileImage(File(profilePic)),radius: fadingCircleSize,
-                          child: IconButton(
-                              icon: Icon(Icons.camera_alt_rounded,size: radiusCircle,),
-                              color: Colors.black54,
-                              onPressed: () { getImage(); },
-                              padding: EdgeInsets.fromLTRB(110, 50, 0, 0)),
-                        ),
-                        SizedBox(height:sizedBoxNormalHeight),
-                        Text('$username', style: TextStyle(fontSize: appBarTitle,fontWeight: FontWeight.bold,color: Colors.black87)),
+            Container(
+                height: containerHeight,
+                width: containerWidth,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("$bgProfile"), fit: BoxFit.cover),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Column(
+                    children: [
+                  profilePic == null ?
+                  CircleAvatar(
+                  backgroundImage:AssetImage('$noDpImage'),radius: fadingCircleSize,
+                    child: IconButton(
+                        icon: Icon(Icons.camera_alt_rounded,size: radiusCircle,),
+                        color: Colors.black54,
+                        onPressed: () { getImage(); },
+                        padding: EdgeInsets.fromLTRB(110, 50, 0, 0)),
+                ):
+                  CircleAvatar(
+                   backgroundImage: FileImage(File(profilePic)),radius: fadingCircleSize,
+                        child: IconButton(
+                            icon: Icon(Icons.camera_alt_rounded,size: radiusCircle,),
+                            color: Colors.black54,
+                            onPressed: () { getImage(); },
+                            padding: EdgeInsets.fromLTRB(110, 50, 0, 0)),
+                      ),
+                      SizedBox(height:sizedBoxNormalHeight),
+                      Text('$username', style: TextStyle(fontSize: appBarTitle,fontWeight: FontWeight.bold,color: Colors.black87)),
 
-                      ],
-                    ),
+                    ],
                   ),
-              ),
+                ),
             ),
 
             Column(

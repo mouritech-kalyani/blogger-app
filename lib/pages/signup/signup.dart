@@ -257,27 +257,25 @@ class _SignUpState extends State<SignUp> {
                         // ),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            //If account is already there then do sign in
-                            child: Center(child: Text('$accountIs', style: TextStyle(color: Colors.black38,fontSize: normalFontSize))),
-                            onTap: (){
-                              Navigator.pushNamed(context, '/signin');
-                            },
-                          ),
-                          GestureDetector(
-                            //If account is already there then do sign in
-                            child: Center(child: Text('$signInHere', style: TextStyle(color: Colors.deepOrangeAccent,fontSize: normalFontSize))),
-                            onTap: (){
-                              Navigator.pushNamed(context, '/signin');
-                            },
-                          ),
-                        ],
-                      ),
+                    SizedBox(height: normalFontSize),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          //If account is already there then do sign in
+                          child: Center(child: Text('$accountIs', style: TextStyle(color: Colors.black38,fontSize: fullNameSize))),
+                          onTap: (){
+                            Navigator.pushNamed(context, '/signin');
+                          },
+                        ),
+                        GestureDetector(
+                          //If account is already there then do sign in
+                          child: Center(child: Text('$signInHere', style: TextStyle(color: Colors.deepOrangeAccent,fontSize: fullNameSize))),
+                          onTap: (){
+                            Navigator.pushNamed(context, '/signin');
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),

@@ -11,5 +11,6 @@ double likeCommentGapWidthOnMyBlogs=190;
 double sizeWidth=50;
 double radiusCircle=40.0;
 double containerHeight=300;
-double containerWidth=410;
+double containerWidth=450;
 double fixedHeight=100;
+double normalWidth=130;

@@ -105,9 +105,12 @@ class _AllBlogsState extends State<AllBlogs> {
                                 Row(
                                     children:<Widget>[
                                      Expanded(flex: 1, child: Text(allBlogs[index]["likes"].toString() ,style: TextStyle(fontSize: blogTimeAndCompany))),
-                                      IconButton(icon: Icon(allBlogs[index]["likes"] == 0 ? Icons.favorite_border : Icons.favorite,size: sizedBoxNormalHeight,color: Colors.red,), onPressed: () {
-                                        blogLikeFunction(allBlogs[index]["likes"],allBlogs[index]["description"],allBlogs[index]["blogId"],allBlogs[index]["user"]["userId"],allBlogs[index]["blogTime"]);
-                                      },),
+                                      Expanded(
+                                        flex:3,
+                                        child: IconButton(icon: Icon(allBlogs[index]["likes"] == 0 ? Icons.favorite_border : Icons.favorite,size: sizedBoxNormalHeight,color: Colors.red,), onPressed: () {
+                                          blogLikeFunction(allBlogs[index]["likes"],allBlogs[index]["description"],allBlogs[index]["blogId"],allBlogs[index]["user"]["userId"],allBlogs[index]["blogTime"]);
+                                        },),
+                                      ),
                                       SizedBox(width: sizedBoxWidthMAx,),
                                       Expanded(flex:8,child: Text('Comments')),
                                       Expanded(flex:4,child: IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,), onPressed: () { showComments(allBlogs[index]["blogId"]); },))

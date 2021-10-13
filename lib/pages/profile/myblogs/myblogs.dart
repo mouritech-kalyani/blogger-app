@@ -98,7 +98,7 @@ getMyBlogs()async{
                   itemBuilder: (BuildContext context, int index){
                     return Card(
                       child: Padding(
-                        padding: const EdgeInsets.all(15.0),
+                        padding: const EdgeInsets.all(10.0),
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
@@ -119,7 +119,7 @@ getMyBlogs()async{
                               SizedBox(height: sizedHeightMinHeight,),
                               Row(
                                   children:<Widget>[
-                                    Expanded(flex:1,child: Text(userBlogs[index]["likes"].toString(),style: TextStyle(fontSize: normalFontSize))),
+                                    Expanded(flex:1,child: Text(userBlogs[index]["likes"].toString(),style: TextStyle(fontSize: blogTimeAndCompany))),
                                     Expanded(flex:3,child: IconButton(onPressed: null, icon: Icon(userBlogs[index]["likes"] == 0 ? Icons.favorite_outline_rounded : Icons.favorite,color: Colors.red,size: sizedBoxNormalHeight,))),
                                     SizedBox(width: sizedBoxWidthMAx,),
                                     Expanded(flex:8,child: Text('Comments')),
