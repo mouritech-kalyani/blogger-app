@@ -208,6 +208,7 @@ class _SignInState extends State<SignIn> {
                   ),
                 ),
               ),
+              SizedBox(height: normalFontSize),
               Padding(
                 padding: const EdgeInsets.fromLTRB(100, 100, 0, 0),
                 child: Row(

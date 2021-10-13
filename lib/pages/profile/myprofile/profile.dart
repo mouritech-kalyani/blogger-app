@@ -197,7 +197,7 @@ class _MyProfileState extends State<MyProfile> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(0.0),
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: Container(
                   height: containerHeight,
                   width: containerWidth,
