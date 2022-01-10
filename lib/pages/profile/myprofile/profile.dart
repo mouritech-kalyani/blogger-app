@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bloggers/pages/signin/signin.dart';
 import 'package:bloggers/utils/apis/allapis.dart';
 import 'package:bloggers/utils/messages/message.dart';
+import 'package:bloggers/utils/styles/fonts/fonts.dart';
 import 'package:bloggers/utils/styles/icons/icons.dart';
 import 'package:bloggers/utils/styles/sizes/sizes.dart';
 import 'package:flutter/cupertino.dart';
@@ -107,14 +108,14 @@ class _MyProfileState extends State<MyProfile> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Row(
           children: [
-            Text('My Profile',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
-            IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
+            Text('My Profile',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle,color: Colors.white,fontFamily:fontFamily)),
           ],
         ),
-        backgroundColor:Colors.deepOrangeAccent,
+          backgroundColor: Colors.black,
         actions: [
           IconButton(onPressed: (){
             //Confirmation for Delete account
@@ -166,8 +167,13 @@ class _MyProfileState extends State<MyProfile> {
 
                 // set up the AlertDialog
                 AlertDialog alert = AlertDialog(
-                title: Text("Delete Account"),
-                content: Text("$deleteAccount"),
+                  backgroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: BorderSide(color: Colors.white, width: 1),
+                  ),
+                title: Text("Deactivate Account",style: TextStyle(color: Colors.white,fontFamily: fontFamily)),
+                content: Text("$deleteAccount",style: TextStyle(color: Colors.white,fontFamily: fontFamily)),
                 actions: [
                 cancelButton,
                 continueButton,
@@ -192,7 +198,7 @@ class _MyProfileState extends State<MyProfile> {
 
         ],
       ),
-      body:isLoading ? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: fadingCircleSize,) :
+      body:isLoading ? SpinKitFadingCircle(color: Color(0xffd81b60),size: fadingCircleSize,) :
       SingleChildScrollView(
         child: Column(
           children: [
@@ -212,7 +218,7 @@ class _MyProfileState extends State<MyProfile> {
                   backgroundImage:AssetImage('$noDpImage'),radius: fadingCircleSize,
                     child: IconButton(
                         icon: Icon(Icons.camera_alt_rounded,size: radiusCircle,),
-                        color: Colors.black54,
+                        color: Colors.black,
                         onPressed: () { getImage(); },
                         padding: EdgeInsets.fromLTRB(110, 50, 0, 0)),
                 ):
@@ -220,12 +226,12 @@ class _MyProfileState extends State<MyProfile> {
                    backgroundImage: FileImage(File(profilePic)),radius: fadingCircleSize,
                         child: IconButton(
                             icon: Icon(Icons.camera_alt_rounded,size: radiusCircle,),
-                            color: Colors.black54,
+                            color: Colors.black,
                             onPressed: () { getImage(); },
                             padding: EdgeInsets.fromLTRB(110, 50, 0, 0)),
                       ),
                       SizedBox(height:sizedBoxNormalHeight),
-                      Text('$username', style: TextStyle(fontSize: appBarTitle,fontWeight: FontWeight.bold,color: Colors.black87)),
+                      Text('$username', style: TextStyle(fontSize: appBarTitle,fontWeight: FontWeight.bold,color: Colors.black,fontFamily: fontFamily)),
 
                     ],
                   ),
@@ -241,44 +247,38 @@ class _MyProfileState extends State<MyProfile> {
                       children: [
                         Card(
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  bottomRight: Radius.circular(sizedHeightMinHeight),
-                                  topRight: Radius.circular(sizedHeightMinHeight),
-                                  topLeft: Radius.circular(sizedHeightMinHeight),
-                                  bottomLeft: Radius.circular(sizedHeightMinHeight)
-                              ),
-                              side: BorderSide(width: 3, color: Colors.orangeAccent)),
+                            borderRadius: BorderRadius.circular(sizedHeightMinHeight),
+                            side: BorderSide(color: Colors.white, width: 1),
+                          ),
+                          color: Colors.black,
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Column(
                               children: [
-                                Text("$followers",style: TextStyle(fontSize: sizedBoxNormalHeight,fontWeight: FontWeight.bold,color: Colors.deepOrangeAccent),),
-                                Text("Followers",style: TextStyle(fontSize: blogTimeAndCompany),)
+                                Text("$followers",style: TextStyle(fontSize: sizedBoxNormalHeight,fontWeight: FontWeight.bold,color: Colors.white),),
+                                Text("Followers",style: TextStyle(fontSize: blogTimeAndCompany,color:Colors.white,fontFamily:fontFamily),)
                               ],
                             ),
                           ),
                         ),
                         Card(
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  bottomRight: Radius.circular(sizedHeightMinHeight),
-                                  topRight: Radius.circular(sizedHeightMinHeight),
-                                  topLeft: Radius.circular(sizedHeightMinHeight),
-                                  bottomLeft: Radius.circular(sizedHeightMinHeight)
-                              ),
-                              side: BorderSide(width: 3, color: Colors.orangeAccent)),
+                            borderRadius: BorderRadius.circular(sizedHeightMinHeight),
+                            side: BorderSide(color: Colors.white, width: 1),
+                          ),
+                          color: Colors.black,
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(25,10,25,10),
                             child: Column(
                               children: [
-                                Text("$blogCount",style: TextStyle(fontSize: sizedBoxNormalHeight,fontWeight: FontWeight.bold,color:Colors.deepOrangeAccent),),
-                                //Icon(Icons.people,size: 40),
-                                Text("Blogs",style: TextStyle(fontSize: blogTimeAndCompany),)
+                                Text("$blogCount",style: TextStyle(fontSize: sizedBoxNormalHeight,fontWeight: FontWeight.bold,color:Colors.white),),
+                                Text("Blogs",style: TextStyle(fontSize: blogTimeAndCompany,color:Colors.white,fontFamily:fontFamily),)
                               ],
                             ),
                           ),
                         ),
                         Card(
+                          color: Colors.black,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(
                                   bottomRight: Radius.circular(sizedHeightMinHeight),
@@ -286,13 +286,13 @@ class _MyProfileState extends State<MyProfile> {
                                   topLeft: Radius.circular(sizedHeightMinHeight),
                                   bottomLeft: Radius.circular(sizedHeightMinHeight)
                               ),
-                              side: BorderSide(width: 3, color: Colors.orangeAccent)),
+                              side: BorderSide(width: 1, color: Colors.white)),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Column(
                               children: [
-                                Text("$following",style: TextStyle(fontSize: sizedBoxNormalHeight,fontWeight: FontWeight.bold,color:Colors.deepOrangeAccent),),
-                                Text("Following",style: TextStyle(fontSize: blogTimeAndCompany),)
+                                Text("$following",style: TextStyle(fontSize: sizedBoxNormalHeight,fontWeight: FontWeight.bold,color:Colors.white),),
+                                Text("Following",style: TextStyle(fontSize: blogTimeAndCompany,color:Colors.white,fontFamily:fontFamily),)
                               ],
                             ),
                           ),
@@ -307,13 +307,10 @@ class _MyProfileState extends State<MyProfile> {
               padding: const EdgeInsets.all(10.0),
               child: Card(
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(sizedHeightMinHeight),
-                        topRight: Radius.circular(sizedHeightMinHeight),
-                        topLeft: Radius.circular(sizedHeightMinHeight),
-                        bottomLeft: Radius.circular(sizedHeightMinHeight)
-                    ),
-                    side: BorderSide(width: 1, color: Colors.orangeAccent)),
+                  borderRadius: BorderRadius.circular(sizedHeightMinHeight),
+                  side: BorderSide(color: Colors.white, width: 1),
+                ),
+                color: Colors.black,
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
@@ -328,7 +325,7 @@ class _MyProfileState extends State<MyProfile> {
                               fullNameEdit=e;
                             });
                             },
-                            style: TextStyle(fontSize: normalFontSize,)
+                            style: TextStyle(fontSize: normalFontSize,color: Colors.white,fontFamily: fontFamily)
                         ),
                         Padding(
                       padding: const EdgeInsets.fromLTRB(5,0,0,0),
@@ -340,8 +337,8 @@ class _MyProfileState extends State<MyProfile> {
                           icon: Visibility(
                             visible: isEditable,
                             child: Icon(
-                              Icons.remove_red_eye,
-                              color: this.showPassword ? Colors.blue : Colors.grey,
+                              showPassword ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
+                              color: Colors.white,
                             ),
                           ),
                           onPressed: () {
@@ -366,10 +363,9 @@ class _MyProfileState extends State<MyProfile> {
                       }
                       });
                      },
-                      style: TextStyle(fontSize: normalFontSize)
+                      style: TextStyle(fontSize: normalFontSize,fontFamily: fontFamily,color:Colors.white)
                       ),
                       ),
-                        //Text("$passwordError",style: TextStyle(color: Colors.red)),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(5,0,0,0),
                       child: TextFormField(
@@ -380,43 +376,73 @@ class _MyProfileState extends State<MyProfile> {
                       companyNameEdit=e;
                       });
                       },
-                      style: TextStyle(fontSize: normalFontSize)
+                      style: TextStyle(fontSize: normalFontSize,fontFamily: fontFamily,color:Colors.white)
                       ),
                       ),
                     Padding(
                        padding: const EdgeInsets.fromLTRB(10,10,10,10),
-                      child: isLoading ? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: radiusCircle,) :ElevatedButton(onPressed: (){
-                       if(isEditable){
-                      saveDetails(context);
-                      }
-                      else{
-                      setState(() {
-                      isEditable=!isEditable;
-                      });
-                      }
-                     },
-                      style: ButtonStyle(
-                      padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(40,10,40,10)),
-                      backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
+                      child: isLoading ? SpinKitFadingCircle(color: Color(0xffd81b60),size: radiusCircle,) :
+                      RaisedButton(
+                        textColor: Colors.white,
+                        padding: const EdgeInsets.all(0.0),
+                        shape:RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(sizedHeightMinHeight)
+                        ),
+                        onPressed: (){
+                          if(isEditable){
+                            saveDetails(context);
+                          }
+                          else{
+                            setState(() {
+                              isEditable=!isEditable;
+                            });
+                          }
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: <Color>[
+                                  Color(0xffd81b60),
+                                  Color(0xffff4081),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.all(Radius.circular(10.0))
+                          ),
+                            padding: EdgeInsets.fromLTRB(40,10,40,10),
+                            child: isEditable ? Text('Save Record',style: TextStyle(fontSize: 17,fontWeight: FontWeight.w700,fontFamily: fontFamily,color: Colors.white),):Text('Edit Record',style: TextStyle(fontSize: 17,fontWeight: FontWeight.w700,fontFamily: fontFamily,color:Colors.white))
 
+                        ),
                       ),
-                      child: isEditable ? Text('Save Record',style: TextStyle(fontSize: 17,fontWeight: FontWeight.w700),):Text('Edit Record',style: TextStyle(fontSize: 17,fontWeight: FontWeight.w700))),
                       ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10,10,10,10),
-                      child: ElevatedButton(onPressed:
+                      child: RaisedButton(
+                        textColor: Colors.white,
+                        padding: const EdgeInsets.all(0.0),
+                        shape:RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(sizedHeightMinHeight)
+                        ),
+                        onPressed:
                         () {
                         //Move to see logged in user blogs
                         Navigator.pushNamed(context, '/myblogs');
                         },
-                        style: ButtonStyle(
-                        padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50,10,50,10)),
-                        backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
+                          child: Container(
+                          decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: <Color>[
+                                  Color(0xffd81b60),
+                                  Color(0xffff4081),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.all(Radius.circular(10.0))
+                          ),
+                          padding: EdgeInsets.fromLTRB(50,10,50,10),
+                          child: Text('My Blogs',style: TextStyle(fontSize: 17,fontWeight: FontWeight.w700,fontFamily:fontFamily),)
 
-                         ),
-                        child: Text("My Blogs",style: TextStyle(fontSize: 17,fontWeight: FontWeight.w700))),
+                      ),
+                  ),
                     ),
-
                       ],
                     ),
                   ),

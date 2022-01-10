@@ -48,3 +48,4 @@ String apiError="Error. Please try again!";
 String activated="Account Activated";
 String passwordUpdated ="Password updated";
 String followedAllUsers="You followed all users!";
+String emailRegEx = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";

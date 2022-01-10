@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'package:bloggers/utils/apis/allapis.dart';
 import 'package:bloggers/utils/messages/message.dart';
+import 'package:bloggers/utils/styles/fonts/fonts.dart';
 import 'package:bloggers/utils/styles/icons/icons.dart';
 import 'package:bloggers/utils/styles/sizes/sizes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
+import 'package:share/share.dart';
 import '../../comments/AddComments.dart';
 import '../../blogs/addblog/addblog.dart';
 
@@ -63,18 +66,18 @@ getMyBlogs()async{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
         appBar: AppBar(
           title: Row(
             children: [
-              Text('My Blogs',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
-              IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
-            ],
+              Text('My Blogs',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle,color: Colors.white,fontFamily:fontFamily)),
+             ],
           ),
-          backgroundColor:Colors.deepOrangeAccent,
+          backgroundColor:Colors.black,
 
         ),
       body: Container(
-          child: isLoading ? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: fadingCircleSize,):
+          child: isLoading ? SpinKitFadingCircle(color: Color(0xffd81b60),size: fadingCircleSize,):
           //Check whether current user having blogs or not
           checkNoBlog ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -82,13 +85,12 @@ getMyBlogs()async{
               Image.asset("$noBlogsIcon",height: fixedHeight,width:fixedHeight),
               SizedBox(height: sizedBoxNormalHeight,),
               Center(child: Text("$noBlogs",
-                style:TextStyle(fontSize: normalFontSize) ,)),
+                style:TextStyle(fontSize: normalFontSize, color: Colors.white ) ,)),
             ],
           ) :
           SingleChildScrollView(
             child: Container(
               margin: const EdgeInsets.all(10.0),
-
               child: ListView.builder(
                   primary: false,
                   reverse: true,
@@ -97,6 +99,11 @@ getMyBlogs()async{
                   itemCount: userBlogs.length,
                   itemBuilder: (BuildContext context, int index){
                     return Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: BorderSide(color: Colors.white, width: 1),
+                      ),
+                      color: Colors.black,
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Column(
@@ -104,27 +111,31 @@ getMyBlogs()async{
                             children: <Widget>[
                               Row(
                                 children: <Widget>[
-                                  Expanded(flex:4 , child: Text(userBlogs[index]["blogTime"].toString(),style: TextStyle(fontSize: 18))),
+                                  Expanded(flex:4 , child: Text(userBlogs[index]["blogTime"].toString(),style: TextStyle(fontSize: 18,color:Colors.white,fontFamily: fontFamily))),
                                   SizedBox(width:normalFontSize),
-                                  Expanded(flex:1, child: IconButton(icon:Icon(Icons.edit), onPressed: () { editBlog(userBlogs[index]["blogId"],userBlogs[index]["description"],userBlogs[index]["likes"]); })),
-                                  Expanded(flex:1,child: IconButton(icon:Icon(Icons.delete), onPressed: () { deleteBlog(userBlogs[index]["blogId"]); },),),
+                                  Expanded(flex:1, child: IconButton(icon:Icon(Icons.edit,color: Colors.white,), onPressed: () { editBlog(userBlogs[index]["blogId"],userBlogs[index]["description"],userBlogs[index]["likes"]); })),
+                                  Expanded(flex:1,child: IconButton(icon:Icon(Icons.delete,color:Colors.white), onPressed: () { deleteBlog(userBlogs[index]["blogId"]); },),),
                                 ],
                               ),
                               SizedBox(height:normalFontSize),
                               Row(
                                   children:<Widget>[
-                                    Flexible(child: Text(userBlogs[index]["description"],style: TextStyle(fontSize: normalFontSize),overflow: TextOverflow.ellipsis,maxLines: 10,)),
+                                    Flexible(child: Html(data: userBlogs[index]["description"],
+                                    defaultTextStyle:
+                                    TextStyle(fontSize: normalFontSize,color:Colors.white,fontFamily: fontFamily, overflow: TextOverflow.ellipsis,))),
+                                    // Flexible(child: Text(userBlogs[index]["description"],style: TextStyle(fontSize: normalFontSize,color:Colors.white,fontFamily: fontFamily),overflow: TextOverflow.ellipsis,maxLines: 10,)),
                                   ]
                               ),
                               SizedBox(height: sizedHeightMinHeight,),
                               Row(
                                   children:<Widget>[
-                                    Expanded(flex:1,child: Text(userBlogs[index]["likes"].toString(),style: TextStyle(fontSize: blogTimeAndCompany))),
-                                    Expanded(flex:3,child: IconButton(onPressed: null, icon: Icon(userBlogs[index]["likes"] == 0 ? Icons.favorite_outline_rounded : Icons.favorite,color: Colors.red,size: sizedBoxNormalHeight,))),
-                                    SizedBox(width: sizedBoxWidthMAx,),
-                                    Expanded(flex:8,child: Text('Comments')),
-                                    Expanded(flex:4,child: IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,), onPressed: () { showComments(userBlogs[index]["blogId"]); },))
-                                  ]
+                                    Expanded(flex:1,child: Text(userBlogs[index]["likes"].toString(),style: TextStyle(fontSize: blogTimeAndCompany,color: Colors.white))),
+                                    Expanded(flex:3,child: IconButton(onPressed: null, icon: Icon(userBlogs[index]["likes"] == 0 ? Icons.favorite_outline_rounded : Icons.favorite,color: Color(0xffd81b60),size: sizedBoxNormalHeight,))),
+                                    SizedBox(width: 100,),
+                                    Expanded(flex:5,child: Text('Comments',style: TextStyle(fontFamily: fontFamily,color: Colors.white,fontSize: fullNameSize),)),
+                                    Expanded(flex:4,child: IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,color: Colors.white), onPressed: () {showComments(userBlogs[index]["blogId"]);},)),
+                                    Expanded(flex:2,child: IconButton(icon:Icon(Icons.share,size: sizedBoxNormalHeight,color: Colors.white),onPressed: (){Share.share(userBlogs[index]["description"]);},))
+                               ]
                               ),
                             ]
                         ),
@@ -141,7 +152,11 @@ getMyBlogs()async{
         // will navigate to add blog page
 
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.deepOrangeAccent,
+        backgroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+          side: BorderSide(color: Colors.white, width: 2),
+        ),
             onPressed: (){
               Navigator.push(context, MaterialPageRoute(builder: (context)=> AddBlog(userId:userIdFromSession)));
             },
@@ -187,8 +202,13 @@ getMyBlogs()async{
 
       // set up the AlertDialog
       AlertDialog alert = AlertDialog(
-        title: Text("Delete Blog"),
-        content: Text("$deleteBlogMessage"),
+        backgroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(color: Colors.white, width: 1),
+        ),
+        title: Text("Delete Blog",style: TextStyle(color: Colors.white,fontFamily: fontFamily)),
+        content: Text("$deleteBlogMessage",style: TextStyle(color: Colors.white,fontFamily: fontFamily)),
         actions: [
           cancelButton,
           continueButton,

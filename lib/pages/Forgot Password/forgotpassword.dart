@@ -1,13 +1,11 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:bloggers/pages/Forgot%20Password/resetpassword.dart';
-import 'package:bloggers/pages/dashboard/dashboard.dart';
 import 'package:bloggers/utils/apis/allapis.dart';
 import 'package:bloggers/utils/messages/message.dart';
-import 'package:bloggers/utils/styles/icons/icons.dart';
+import 'package:bloggers/utils/styles/fonts/fonts.dart';
 import 'package:bloggers/utils/styles/sizes/sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
@@ -24,122 +22,141 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   List allBlogs=[];
   String email='';
   String password='';
-  RegExp emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  RegExp emailValid = RegExp(emailRegEx);
   String emailError='';
   String passwordError='';
   String logError='';
   int userId=0;
   String username="";
-  bool _showPassword = false;
   bool isLoading=false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Row(
-          children: [
-            Text('Forgot Password',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
-            IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
-          ],
-        ),
-        backgroundColor:Colors.deepOrangeAccent,
-        // leading: GestureDetector(
-        //   child: Image.asset("$appIcon",color: Colors.white,),
-        // ),
+        backgroundColor: Colors.black,
       ),
 
       //body of forgot password
 
       body: SingleChildScrollView(
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(sizedHeightMinHeight),
-                      topRight: Radius.circular(sizedHeightMinHeight),
-                      topLeft: Radius.circular(sizedHeightMinHeight),
-                      bottomLeft: Radius.circular(sizedHeightMinHeight)
+        child: Column(
+          children: [
+            Container(
+              color: Colors.black,
+              child: Column(
+                children: [
+                  Text('Forgot Password',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: appBarTitle,fontFamily: fontFamily),),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height*0.80,
+                      child: Card(
+                        elevation: 0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(60)
+                              )),
+
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(height: normalFontSize),
+                              TextField(
+                                style: TextStyle(color: Colors.black,fontFamily: fontFamily),
+                                decoration: new InputDecoration(
+                                  focusedBorder : OutlineInputBorder(
+                                    borderSide: BorderSide(color:(emailError == requiredCurrentField || emailError == validateError) ? Color(0xffd81b60) : Colors.black),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color:(emailError == requiredCurrentField || emailError == validateError) ? Color(0xffd81b60) : Colors.black),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.email,
+                                    color: Colors.black,
+                                  ),
+                                  hintText: '$userNamePlaceholder',
+                                  hintStyle:TextStyle(color:Colors.black,fontFamily: fontFamily),
+                                  labelText: "Email/Username",
+                                  labelStyle: TextStyle(fontSize: normalFontSize,color:Colors.black,fontFamily: fontFamily),
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                onChanged: (txt){
+                                  if(!emailValid.hasMatch(txt)){
+                                    setState(() {
+                                      emailError='$validateError';
+                                    });
+                                  }else{setState(() {
+                                    emailError='';
+                                    email=txt;
+                                  });}
+                                },
+                              ),
+                              //show email error if it is invalid
+                              Text('$emailError',style: TextStyle(color: Color(0xffff4081),fontSize: blogTimeAndCompany)),
+                              SizedBox(height: normalFontSize),
+                              Center(
+                                child: isLoading? SpinKitFadingCircle(color: Color(0xffff4081),size: radiusCircle,) :
+                                RaisedButton(
+                                    onPressed: (){
+                                      //if form error the show on toast
+                                      if(email == '' ){
+                                        setState(() {
+                                          emailError="$requiredCurrentField";
+                                        });
+                                        Fluttertoast.showToast(
+                                          msg: emailError,
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 1,
+                                        );
+                                      }
+                                      else {
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        searchEmail();
+                                      }
+
+                                    },
+                                      textColor: Colors.white,
+                                      padding: const EdgeInsets.all(0.0),
+                                      shape:RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(sizedHeightMinHeight)
+                                      ),
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: <Color>[
+                                                Color(0xffd81b60),
+                                                Color(0xffff4081),
+                                              ],
+                                            ),
+                                            borderRadius: BorderRadius.all(Radius.circular(10.0))
+                                        ),
+                                        padding: const EdgeInsets.fromLTRB(50,20,50,20),
+                                        //padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                        child: const Text(
+                                            'Confirm Email',
+                                            style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,fontFamily: 'Source Sans 3')
+                                        ),
+                                      ),
+                                    )
+                                ),
+
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  side: BorderSide(width: 1, color: Colors.orangeAccent)),
-
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(height: normalFontSize),
-                    TextField(
-                      decoration: new InputDecoration(
-                        focusedBorder : OutlineInputBorder(
-                          borderSide: BorderSide(color:(emailError == requiredCurrentField || emailError == validateError) ? Colors.red : Colors.black12),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color:(emailError == requiredCurrentField || emailError == validateError) ? Colors.red : Colors.black12),
-                        ),
-                        hintText: '$userNamePlaceholder',
-                        labelText: "Email/Username",
-                        labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black54),
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      onChanged: (txt){
-                        if(!emailValid.hasMatch(txt)){
-                          setState(() {
-                            emailError='$validateError';
-                          });
-                        }else{setState(() {
-                          emailError='';
-                          email=txt;
-                        });}
-                      },
-                    ),
-                    //show email error if it is invalid
-                    Text('$emailError',style: TextStyle(color: Colors.red,fontSize: blogTimeAndCompany)),
-                    SizedBox(height: normalFontSize),
-                    Center(
-                      child: isLoading? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: radiusCircle,) :
-                      ElevatedButton(
-                          onPressed: (){
-                            //if form error the show on toast
-                            if(email == '' ){
-                              setState(() {
-                                emailError="$requiredCurrentField";
-                              });
-                              Fluttertoast.showToast(
-                                msg: emailError,
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.CENTER,
-                                timeInSecForIosWeb: 1,
-                              );
-                            }
-                            else {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              searchEmail();
-                            }
-
-                          },
-                          child: Text('Confirm Email',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: normalFontSize),),
-                          style: ButtonStyle(
-                              padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50,20,50,20)),
-                              backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
-                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(sizedHeightMinHeight)
-                                  )
-                              )
-                          )
-                      ),
-                    ),
-
-                  ],
-                ),
+                ],
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

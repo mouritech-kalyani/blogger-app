@@ -19,8 +19,8 @@ class _DashboardState extends State<Dashboard> {
       length: 3,
       child: Scaffold(
         bottomNavigationBar: new Material(
-          color:Colors.deepOrangeAccent,
-          shadowColor: Colors.orangeAccent,
+          color:Colors.black,
+          elevation: 0,
           //Show tab bar for Blogs,Users and My Profile
           child: TabBar(
             indicatorColor: Colors.white,

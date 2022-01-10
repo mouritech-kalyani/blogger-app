@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:bloggers/utils/apis/allapis.dart';
 import 'package:bloggers/utils/messages/message.dart';
+import 'package:bloggers/utils/styles/fonts/fonts.dart';
 import 'package:bloggers/utils/styles/icons/icons.dart';
 import 'package:bloggers/utils/styles/sizes/sizes.dart';
 import 'package:flutter_session/flutter_session.dart';
@@ -50,25 +51,26 @@ class _PeopleState extends State<People> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Row(
           children: [
-            Text('People',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
-            IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
+            Text('People',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle,color: Colors.white)),
           ],
         ),
-        backgroundColor:Colors.deepOrangeAccent,
+        backgroundColor: Colors.black,
       ),
-      body: isLoading ?SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: fadingCircleSize,)
+      body: isLoading ?SpinKitFadingCircle(color: Color(0xffd81b60),size: fadingCircleSize,)
           :allUsers.isEmpty ? Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(followedAll,height: 150,width:200),
           SizedBox(height: 30,),
-          Center(child:Text("$followedAllUsers",style: TextStyle(fontSize: normalFontSize),)),
+          Center(child:Text("$followedAllUsers",style: TextStyle(fontSize: normalFontSize, color: Colors.white),)),
         ],
       ) :SingleChildScrollView(
           child: Container(
+            color: Colors.black,
             margin: const EdgeInsets.all(10.0),
             child: ListView.builder(
                 primary: false,
@@ -78,6 +80,11 @@ class _PeopleState extends State<People> {
                 itemCount: allUsers.length,
                 itemBuilder: (BuildContext context, int index){
                   return Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: Colors.white, width: 1),
+                    ),
+                    color: Colors.black,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(10,10,10,10),
                       child: Row(
@@ -88,27 +95,39 @@ class _PeopleState extends State<People> {
 
                                 Expanded(flex:4 , child: Padding(
                                   padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                                  child: Text(allUsers[index]["fullName"].toString(),style: TextStyle(fontSize: 18)),
+                                  child: Text(allUsers[index]["fullName"].toString(),style: TextStyle(fontSize: 18,color: Colors.white,fontFamily: fontFamily)),
                                 )),
 
-                                  Expanded(flex:4 , child: Text(allUsers[index]["companyName"].toString(),style: TextStyle(fontSize: 15))),
+                                  Expanded(flex:4 , child: Text(allUsers[index]["companyName"].toString(),style: TextStyle(fontSize: 15,color:Colors.white,fontFamily: fontFamily))),
                                   Expanded(
                                     flex:4,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        followUser(allUsers[index]["userId"]);
-                                      },
-                                    style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(Colors.deepOrange),
-                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(sizedHeightMinHeight)
-                                    )
-                                    )
-                                    ),
-                                    child: Text("Follow",style: TextStyle(fontSize: blogTimeAndCompany,fontWeight: FontWeight.w800,color:Colors.white),),),
+                               child: RaisedButton(
+                                    onPressed: () {  followUser(allUsers[index]["userId"]); },
+                                 textColor: Colors.black,
+                                 elevation: 0,
+                                 padding: const EdgeInsets.all(0.0),
+                                 shape:RoundedRectangleBorder(
+                                     borderRadius: BorderRadius.circular(sizedHeightMinHeight)
+                                 ),
+                                 child: Container(
+                                   decoration: const BoxDecoration(
+                                       gradient: LinearGradient(
+                                         colors: <Color>[
+                                           Color(0xffd81b60),
+                                           Color(0xffff4081),
+                                         ],
+                                       ),
+                                       borderRadius: BorderRadius.all(Radius.circular(10.0))
+                                   ),
+                                   padding: const EdgeInsets.fromLTRB(23.5,10,23,10),
+                                   //padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                   child: const Text(
+                                       'Follow',
+                                       style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.white,fontFamily: 'Source Sans 3')
+                                   ),
+                                 ),
+                                  )
                                   ),
-
                             // Divider( color: Colors.grey[800],),
                           ]
                       ),

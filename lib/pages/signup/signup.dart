@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:bloggers/utils/apis/allapis.dart';
 import 'package:bloggers/utils/messages/message.dart';
-import 'package:bloggers/utils/styles/icons/icons.dart';
+import 'package:bloggers/utils/styles/fonts/fonts.dart';
 import 'package:bloggers/utils/styles/sizes/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
@@ -26,7 +26,7 @@ class _SignUpState extends State<SignUp> {
   String companyName='';
   String password='';
   String email='';
-  RegExp emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  RegExp emailValid = RegExp(emailRegEx);
   String emailError='';
   String fnameError='';
   String compError='';
@@ -38,250 +38,285 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Row(
-          children: [
-            Text('Sign up',style: TextStyle(fontWeight: FontWeight.bold,fontSize: appBarTitle)),
-            IconButton(onPressed: (){}, icon: Icon(Icons.article_sharp,color: Colors.white,)),
-          ],
-        ),
-        backgroundColor:Colors.deepOrangeAccent,
+        elevation: 0,
+        backgroundColor:Colors.black,
       ),
       body:
           //Fill the details to register yourself
       SingleChildScrollView(
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(sizedHeightMinHeight),
-                      topRight: Radius.circular(sizedHeightMinHeight),
-                      topLeft: Radius.circular(sizedHeightMinHeight),
-                      bottomLeft: Radius.circular(sizedHeightMinHeight)
-                  ),
-                  side: BorderSide(width: 1, color: Colors.orangeAccent)),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    // Center(child: Text('$logError',
-                    //     style: TextStyle(color: Colors.red,fontSize: 20,fontWeight: FontWeight.bold))),
-                    SizedBox(height: 20,),
-                    TextField(
-                      decoration: InputDecoration(
-                        focusedBorder : OutlineInputBorder(
-                          borderSide: BorderSide(color:(fnameError == requiredCurrentField || fnameError == validFullName) ? Colors.red : Colors.black12),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color:(fnameError == requiredCurrentField || fnameError == validFullName) ? Colors.red : Colors.black12),
-                        ),
-                        border:OutlineInputBorder(),
-                        hintText: "$fullNamePlaceholder",
-                        labelText: "Full Name",
-                        labelStyle: TextStyle(fontSize: 20,color: Colors.black54),
-                      ),
-                      keyboardType: TextInputType.text,
-                      onChanged: (txt){
-                      if(txt.length <3){
-                        setState(() {
-                          fnameError=validFullName;
-                        });
-                      }else{
-                        setState(() {
-                          fnameError="";
-                          fullName=txt;
-                        });
-                      }
-                      },
-                    ),
-                    Text('$fnameError',style: TextStyle(color: Colors.red,fontSize: 15),),
-                    SizedBox(height: 20),
-                    TextField(
-                      decoration: InputDecoration(
-                        focusedBorder : OutlineInputBorder(
-                          borderSide: BorderSide(color:(compError == requiredCurrentField || compError == validCompanyName) ? Colors.red : Colors.black12),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color:(compError == requiredCurrentField || compError == validCompanyName) ? Colors.red : Colors.black12),
-                        ),
-                        hintText: "$companyNamePlaceholder",
-                        labelText: "Company Name",
-                        labelStyle: TextStyle(fontSize: 20,color: Colors.black54),
-                      ),
-                      keyboardType: TextInputType.text,
-                      onChanged: (txt){
-                      if(txt.length <3){
-                        setState(() {
-                          compError=validCompanyName;
-                        });
-                      }else{
-                        setState(() {
-                          compError="";
-                          companyName=txt;
-                        });
-                      }
-                      },
-                    ),
-                    Text('$compError',style: TextStyle(color: Colors.red,fontSize: 15)),
-                    SizedBox(height: 20),
-                    TextField(
-                      decoration: InputDecoration(
-                        focusedBorder : OutlineInputBorder(
-                          borderSide: BorderSide(color:(emailError == requiredCurrentField || emailError == validateError) ? Colors.red : Colors.black12),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color:(emailError == requiredCurrentField || emailError == validateError) ? Colors.red : Colors.black12),
-                        ),
-                        hintText: '$userNamePlaceholder',
-                        labelText: "Email/Username",
-                        labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black54),
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      onChanged: (txt){
-                        if(!emailValid.hasMatch(txt)){
-                          setState(() {
-                            emailError='$validateError';
-                          });
-                        }else{setState(() {
-                          emailError='';
-                          email=txt;
-                        });}
-                      },
-                    ),
-                    //show email error if it is invalid
-                    Text('$emailError',style: TextStyle(color: Colors.red,fontSize: blogTimeAndCompany)),
-
-                    SizedBox(height: 20),
-                    TextField(
-                      obscureText: !this._showPassword,
-                      decoration: InputDecoration(
-                        focusedBorder : OutlineInputBorder(
-                          borderSide: BorderSide(color:(passwordError == requiredCurrentField || passwordError == validatePassword) ? Colors.red : Colors.black12),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color:(passwordError == requiredCurrentField || passwordError == validatePassword) ? Colors.red : Colors.black12),
-                        ),
-                        hintText: "$passwordPlaceholderSignUp",
-                        labelText: "Password",
-                        labelStyle: TextStyle(fontSize: 20,color: Colors.black54),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            Icons.remove_red_eye,
-                            color: this._showPassword ? Colors.blue : Colors.grey,
-                          ),
-                          onPressed: () {
-                            setState(() => this._showPassword = !this._showPassword);
-                          },
-                        ),
-                      ),
-                      onChanged: (txt){
-                        if(txt.length !=8){
-                          setState(() {
-                            passwordError="$validatePassword";
-                          });
-                        }else{
-                          setState(() {
-                            password=txt;
-                            passwordError='';
-                          });
-                          FocusScope.of(context).requestFocus(FocusNode());
-                        }
-                      },
-                    ),
-                    Text('$passwordError',style: TextStyle(color: Colors.red,fontSize: 15)),
-                    SizedBox(height: 20),
-                    Center(
-                      child: isLoading? SpinKitFadingCircle(color: Colors.deepOrangeAccent,size: 40.0,) :
-                      ElevatedButton(
-                          onPressed: ()=>
-                          {
-                            if(fullName.isEmpty && companyName.isEmpty &&
-                                email.isEmpty && password.isEmpty){
-                              setState(() {
-                                logError = '$requiredField';
-                                fnameError='$requiredCurrentField';
-                                compError='$requiredCurrentField';
-                                emailError='$requiredCurrentField';
-                                passwordError='$requiredCurrentField';
-                              }),
-                              Fluttertoast.showToast(
-                                msg: logError,
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.CENTER,
-                                timeInSecForIosWeb: 1,
-                              )
-                            }else if(fullName.isEmpty || companyName.isEmpty ||
-                            email.isEmpty || password.isEmpty){
-                              if(fullName.isEmpty){
-                                setState(() {
-                                  fnameError='$requiredCurrentField';
-                                }),
-                              }else if(companyName.isEmpty){
-                                setState(() {
-                                  compError='$requiredCurrentField';
-                                }),
-                              }else if(email.isEmpty){
-                                setState(() {
-                                  emailError='$requiredCurrentField';
-                                }),
-                              }else if(password.isEmpty){
-                                setState(() {
-                                  passwordError='$requiredCurrentField';
-                                }),
-                              }
-                            } else
-                              {
-                                 signUpFunction()
+        child: Column(
+          children: [
+            Container(
+              color:Colors.black,
+              child: Column(
+                children: [
+                  Text('New user ? Sign Up Here !',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: appBarTitle,fontFamily: fontFamily),),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height*0.90,
+                      child: Card(
+                        elevation: 0,
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(60),
+                            )),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                             TextField(
+                                style: TextStyle(color: Colors.black,fontFamily: fontFamily),
+                                decoration: InputDecoration(
+                                  focusedBorder : OutlineInputBorder(
+                                    borderSide: BorderSide(color:(fnameError == requiredCurrentField || fnameError == validFullName) ? Color(0xffff4081) : Colors.black),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color:(fnameError == requiredCurrentField || fnameError == validFullName) ? Color(0xffff4081) : Colors.black),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.account_circle,
+                                    color: Colors.black,
+                                  ),
+                                  border:OutlineInputBorder(),
+                                  hintText: "$fullNamePlaceholder",
+                                  hintStyle:TextStyle(color:Colors.black,fontFamily: fontFamily),
+                                  labelText: "Full Name",
+                                  labelStyle: TextStyle(fontSize: 20,color: Colors.black,fontFamily: fontFamily),
+                                ),
+                                keyboardType: TextInputType.text,
+                                onChanged: (txt){
+                                if(txt.length <3){
+                                  setState(() {
+                                    fnameError=validFullName;
+                                  });
+                                }else{
+                                  setState(() {
+                                    fnameError="";
+                                    fullName=txt;
+                                  });
                                 }
-                              },
-                          // logInSuccess(context);
-                          // Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard(username:username,password:password)));
-                          child: Text('Sign up',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 20),),
-                          style: ButtonStyle(
-                              padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50,20,50,20)),
-                            backgroundColor: MaterialStateProperty.all(Colors.deepOrangeAccent),
-                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      //side: BorderSide(color: Colors.red)
-                                  )
-                              )
+                                },
+                              ),
+                              Text('$fnameError',style: TextStyle(color: Color(0xffff4081),fontSize: 15,fontFamily: fontFamily)),
+                              SizedBox(height: blogTimeAndCompany),
+                              TextField(
+                                style: TextStyle(color: Colors.black,fontFamily: fontFamily),
+                                decoration: InputDecoration(
+                                  focusedBorder : OutlineInputBorder(
+                                    borderSide: BorderSide(color:(compError == requiredCurrentField || compError == validCompanyName) ? Color(0xffff4081) : Colors.black),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color:(compError == requiredCurrentField || compError == validCompanyName) ? Color(0xffff4081) : Colors.black),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.home,
+                                    color: Colors.black,
+                                  ),
+                                  hintText: "$companyNamePlaceholder",
+                                  hintStyle:TextStyle(color:Colors.black,fontFamily: fontFamily),
+                                  labelText: "Company Name",
+                                  labelStyle: TextStyle(fontSize: 20,color: Colors.black,fontFamily: fontFamily),
+                                ),
+                                keyboardType: TextInputType.text,
+                                onChanged: (txt){
+                                if(txt.length <3){
+                                  setState(() {
+                                    compError=validCompanyName;
+                                  });
+                                }else{
+                                  setState(() {
+                                    compError="";
+                                    companyName=txt;
+                                  });
+                                }
+                                },
+                              ),
+                              Text('$compError',style: TextStyle(color: Color(0xffff4081),fontSize: 15,fontFamily: fontFamily)),
+                              SizedBox(height: blogTimeAndCompany),
+                              TextField(
+                                style: TextStyle(color: Colors.black,fontFamily: fontFamily),
+                                decoration: InputDecoration(
+                                  focusedBorder : OutlineInputBorder(
+                                    borderSide: BorderSide(color:(emailError == requiredCurrentField || emailError == validateError) ? Color(0xffff4081) : Colors.black),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color:(emailError == requiredCurrentField || emailError == validateError) ? Color(0xffff4081) : Colors.black),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.email,
+                                    color: Colors.black,
+                                  ),
+                                  hintText: '$userNamePlaceholder',
+                                  hintStyle:TextStyle(color:Colors.black,fontFamily: fontFamily),
+                                  labelText: "Email/Username",
+                                  labelStyle: TextStyle(fontSize: normalFontSize,color: Colors.black,fontFamily: fontFamily),
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                onChanged: (txt){
+                                  if(!emailValid.hasMatch(txt)){
+                                    setState(() {
+                                      emailError='$validateError';
+                                    });
+                                  }else{setState(() {
+                                    emailError='';
+                                    email=txt;
+                                  });}
+                                },
+                              ),
+                              //show email error if it is invalid
+                              Text('$emailError',style: TextStyle(color: Color(0xffff4081),fontSize: blogTimeAndCompany,fontFamily: fontFamily)),
 
-                          )
-                        // ButtonStyle(
-                        //     backgroundColor: MaterialStateProperty.all(Colors.pinkAccent),
-                        // ),
+                              SizedBox(height: blogTimeAndCompany),
+                              TextField(
+                                style: TextStyle(color: Colors.black,fontFamily: fontFamily),
+                                obscureText: !this._showPassword,
+                                decoration: InputDecoration(
+                                  focusedBorder : OutlineInputBorder(
+                                    borderSide: BorderSide(color:(passwordError == requiredCurrentField || passwordError == validatePassword) ? Color(0xffff4081): Colors.black),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color:(passwordError == requiredCurrentField || passwordError == validatePassword) ? Color(0xffff4081) : Colors.black),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.vpn_key,
+                                    color: Colors.black,
+                                  ),
+                                  hintText: "$passwordPlaceholderSignUp",
+                                  labelText: "Password",
+                                  hintStyle:TextStyle(color:Colors.black,fontFamily: fontFamily),
+                                  labelStyle: TextStyle(fontSize: 20,color: Colors.black,fontFamily: fontFamily),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                     _showPassword ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
+                                      color: Colors.black,
+                                    ),
+                                    onPressed: () {
+                                      setState(() => this._showPassword = !this._showPassword);
+                                    },
+                                  ),
+                                ),
+                                onChanged: (txt){
+                                  if(txt.length !=8){
+                                    setState(() {
+                                      passwordError="$validatePassword";
+                                    });
+                                  }else{
+                                    setState(() {
+                                      password=txt;
+                                      passwordError='';
+                                    });
+                                    FocusScope.of(context).requestFocus(FocusNode());
+                                  }
+                                },
+                              ),
+                              Text('$passwordError',style: TextStyle(color: Color(0xffff4081),fontSize: 15,fontFamily: fontFamily)),
+                              SizedBox(height: blogTimeAndCompany),
+                              Center(
+                                child: isLoading? SpinKitFadingCircle(color: Color(0xffd81b60),size: 40.0,) :
+                                RaisedButton(
+                                    onPressed: ()=>
+                                    {
+                                      if(fullName.isEmpty && companyName.isEmpty &&
+                                          email.isEmpty && password.isEmpty){
+                                        setState(() {
+                                          logError = '$requiredField';
+                                          fnameError='$requiredCurrentField';
+                                          compError='$requiredCurrentField';
+                                          emailError='$requiredCurrentField';
+                                          passwordError='$requiredCurrentField';
+                                        }),
+                                        Fluttertoast.showToast(
+                                          msg: logError,
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 1,
+                                        )
+                                      }else if(fullName.isEmpty || companyName.isEmpty ||
+                                      email.isEmpty || password.isEmpty){
+                                        if(fullName.isEmpty){
+                                          setState(() {
+                                            fnameError='$requiredCurrentField';
+                                          }),
+                                        }else if(companyName.isEmpty){
+                                          setState(() {
+                                            compError='$requiredCurrentField';
+                                          }),
+                                        }else if(email.isEmpty){
+                                          setState(() {
+                                            emailError='$requiredCurrentField';
+                                          }),
+                                        }else if(password.isEmpty){
+                                          setState(() {
+                                            passwordError='$requiredCurrentField';
+                                          }),
+                                        }
+                                      } else
+                                        {
+                                           signUpFunction()
+                                          }
+                                        },
+                                    // logInSuccess(context);
+                                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard(username:username,password:password)));
+                                  textColor: Colors.black,
+                                  padding: const EdgeInsets.all(0.0),
+                                  shape:RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(sizedHeightMinHeight)
+                                  ),
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: <Color>[
+                                            Color(0xffd81b60),
+                                            Color(0xffff4081),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.all(Radius.circular(10.0))
+                                    ),
+                                    padding: const EdgeInsets.fromLTRB(50,20,50,20),
+                                    //padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                    child: Text(
+                                        '$signUpHere',
+                                        style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.white,fontFamily: 'Source Sans 3')
+                                    ),
+                                  ),
+                                )
+                              ),
+                              SizedBox(height: normalFontSize),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    //If account is already there then do sign in
+                                    child: Center(child: Text('$accountIs', style: TextStyle(color: Colors.black,fontSize: fullNameSize,fontFamily: fontFamily))),
+                                    onTap: (){
+                                      Navigator.pushNamed(context, '/signin');
+                                    },
+                                  ),
+                                  GestureDetector(
+                                    //If account is already there then do sign in
+                                    child: Center(child: Text('$signInHere', style: TextStyle(color: Color(0xffd81b60),fontSize: fullNameSize,fontWeight: FontWeight.bold,fontFamily: fontFamily))),
+                                    onTap: (){
+                                      Navigator.pushNamed(context, '/signin');
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                    SizedBox(height: normalFontSize),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          //If account is already there then do sign in
-                          child: Center(child: Text('$accountIs', style: TextStyle(color: Colors.black38,fontSize: fullNameSize))),
-                          onTap: (){
-                            Navigator.pushNamed(context, '/signin');
-                          },
-                        ),
-                        GestureDetector(
-                          //If account is already there then do sign in
-                          child: Center(child: Text('$signInHere', style: TextStyle(color: Colors.deepOrangeAccent,fontSize: fullNameSize))),
-                          onTap: (){
-                            Navigator.pushNamed(context, '/signin');
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
