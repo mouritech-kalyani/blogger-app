@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:bloggers/pages/signin/signin.dart';
-import 'package:bloggers/utils/apis/allapis.dart';
-import 'package:bloggers/utils/messages/message.dart';
-import 'package:bloggers/utils/styles/fonts/fonts.dart';
-import 'package:bloggers/utils/styles/icons/icons.dart';
-import 'package:bloggers/utils/styles/sizes/sizes.dart';
+import 'package:bloggers/utils/apis.dart';
+import 'package:bloggers/utils/local.dart';
+import 'package:bloggers/utils/styles/fonts.dart';
+import 'package:bloggers/utils/styles/icons.dart';
+import 'package:bloggers/utils/styles/sizes.dart';
+import 'package:bloggers/utils/validatefields.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../dashboard/dashboard.dart';
@@ -149,12 +149,7 @@ class _MyProfileState extends State<MyProfile> {
                    "accountStatus":"deactivate"
                      })
                  ).then((value) => {
-                   Fluttertoast.showToast(
-                     msg: "$deactivateAccount",
-                     toastLength: Toast.LENGTH_SHORT,
-                     gravity: ToastGravity.CENTER,
-                     timeInSecForIosWeb: 1,
-                   ).then((value) => {
+                   callToast(deactivateAccount).then((value) => {
                    Navigator.pushAndRemoveUntil(
                    context, MaterialPageRoute(
                    builder: (context) => SignIn()),
@@ -530,12 +525,7 @@ class _MyProfileState extends State<MyProfile> {
             })
         ).then((result) =>
         {
-          Fluttertoast.showToast(
-            msg: "$recordSaved",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-          ).then((value) => {
+          callToast(recordSaved).then((value) => {
             Navigator.pushAndRemoveUntil(
                 context, MaterialPageRoute(
                 builder: (context) => Dashboard()),

@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:bloggers/utils/apis/allapis.dart';
-import 'package:bloggers/utils/messages/message.dart';
-import 'package:bloggers/utils/styles/fonts/fonts.dart';
-import 'package:bloggers/utils/styles/icons/icons.dart';
-import 'package:bloggers/utils/styles/sizes/sizes.dart';
+import 'package:bloggers/utils/apis.dart';
+import 'package:bloggers/utils/local.dart';
+import 'package:bloggers/utils/styles/fonts.dart';
+import 'package:bloggers/utils/styles/icons.dart';
+import 'package:bloggers/utils/styles/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_session/flutter_session.dart';

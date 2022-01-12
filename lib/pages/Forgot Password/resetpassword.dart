@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:bloggers/pages/signin/signin.dart';
-import 'package:bloggers/utils/apis/allapis.dart';
-import 'package:bloggers/utils/messages/message.dart';
-import 'package:bloggers/utils/styles/fonts/fonts.dart';
-import 'package:bloggers/utils/styles/sizes/sizes.dart';
+import 'package:bloggers/utils/apis.dart';
+import 'package:bloggers/utils/local.dart';
+import 'package:bloggers/utils/styles/fonts.dart';
+import 'package:bloggers/utils/styles/sizes.dart';
+import 'package:bloggers/utils/validatefields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 
 class ResetPassword extends StatefulWidget {
@@ -101,17 +101,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                 ),
                                 obscureText: !this._showPassword,
                                 onChanged: (txt) {
-                                  if (txt.length != 8) {
-                                    setState(() {
-                                      passwordError = "$validatePassword";
-                                    });
-                                  } else {
-                                    setState(() {
-                                      password = txt;
-                                      passwordError = '';
-                                    });
-                                    FocusScope.of(context).requestFocus(FocusNode());
-                                  }
+                                  validatePasswordField(txt);
                                 },
                               ),
                               //show password error if it is invalid
@@ -143,7 +133,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                       fontSize: normalFontSize, color: Colors.black,fontFamily: fontFamily),
                                   suffixIcon: IconButton(
                                     icon: Icon(
-                                      _showPassword ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
+                                      _showPassword1 ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
                                       color: Colors.black,
                                     ),
                                     onPressed: () {
@@ -154,17 +144,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                 ),
                                 obscureText: !this._showPassword1,
                                 onChanged: (txt) {
-                                  if (txt.length != 8) {
-                                    setState(() {
-                                      confirmPasswordError = "$validatePassword";
-                                    });
-                                  } else {
-                                    setState(() {
-                                      confirmPassword = txt;
-                                      confirmPasswordError = '';
-                                    });
-                                    FocusScope.of(context).requestFocus(FocusNode());
-                                  }
+                                  validateConfirmPasswordField(txt);
                                 },
                               ),
                               //show password error if it is invalid
@@ -176,51 +156,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                   color: Color(0xffff4081), size: radiusCircle,) :
                                 RaisedButton(
                                     onPressed: () {
-                                      //if form error the show on toast
-                                      if (password == '' && confirmPassword == '') {
-                                        setState(() {
-                                          logError = "$requiredField";
-                                          passwordError = "$requiredCurrentField";
-                                          confirmPasswordError = "$requiredCurrentField";
-                                        });
-                                        Fluttertoast.showToast(
-                                          msg: logError,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                        );
-                                      }
-                                      else if (password == '') {
-                                        setState(() {
-                                          logError = "$requiredField";
-                                          passwordError = "$requiredCurrentField";
-                                        });
-                                        Fluttertoast.showToast(
-                                          msg: logError,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                        );
-                                      }
-                                      else if (confirmPassword == '') {
-                                        setState(() {
-                                          logError = "$requiredField";
-                                          confirmPasswordError = "$requiredCurrentField";
-                                        });
-                                        Fluttertoast.showToast(
-                                          msg: logError,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                        );
-                                      }
-
-                                      else {
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-                                        changePassword();
-                                      }
+                                      changePassword();
                                     },
                                   textColor: Colors.white,
                                   padding: const EdgeInsets.all(0.0),
@@ -261,70 +197,111 @@ class _ResetPasswordState extends State<ResetPassword> {
       ),
     );
   }
-
-  changePassword() async {
-    if (password == confirmPassword) {
-      //reset password for current user
-      await put(Uri.parse(
-          "$usersData"),
-          headers: {
-            "content-type": "application/json",
-            "accept": "application/json",
-          },
-          body: jsonEncode({
-            "userId": widget.currentUser["userId"],
-            "fullName": widget.currentUser["fullName"],
-            "username": widget.currentUser["username"],
-            "password": confirmPassword,
-            "companyName": widget.currentUser["companyName"],
-            "profilePic": widget.currentUser["profilePic"],
-            "accountStatus":"activate"
-
-          })
-      ).then((result) =>
-      {
-        if(result.statusCode == 200) {
-          setState(() {
-            isLoading = false;
-            logError=passwordUpdated;
-           }),
-          Fluttertoast.showToast(
-            msg: logError,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-          ),
-          Navigator.pushAndRemoveUntil(
-          context, MaterialPageRoute(
-              builder: (context) => SignIn()),
-          ModalRoute.withName("/signin")
-      )
-        }else{
-          setState(() {
-        isLoading = false;
-        logError = apiError;
-      }),
-        Fluttertoast.showToast(
-        msg: logError,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        )
-        }
+  validatePasswordField(txt){
+    String passwordValidate = validateFields(txt, staticPassword);
+    if(passwordValidate == validatePassword){
+      setState(() {
+        passwordError = passwordValidate;
       });
     }
+    else{
+      setState(() {
+        password = passwordValidate;
+        passwordError = '';
+      });
+    }
+  }
+  validateConfirmPasswordField(txt){
+    String passwordValidate = validateFields(txt, staticPassword);
+    if(passwordValidate == validatePassword){
+      setState(() {
+        confirmPasswordError = passwordValidate;
+      });
+    }
+    else{
+      setState(() {
+        confirmPassword = passwordValidate;
+        confirmPasswordError = '';
+      });
+    }
+  }
+  changePassword() async {
+    //if form error the show on toast
+    if (password == '' && confirmPassword == '') {
+      setState(() {
+        logError = "$requiredField";
+        passwordError = "$requiredCurrentField";
+        confirmPasswordError = "$requiredCurrentField";
+      });
+      callToast(logError);
+    }
+    else if (password == '') {
+      setState(() {
+        logError = "$requiredField";
+        passwordError = "$requiredCurrentField";
+      });
+      callToast(logError);
+    }
+    else if (confirmPassword == '') {
+      setState(() {
+        logError = "$requiredField";
+        confirmPasswordError = "$requiredCurrentField";
+      });
+      callToast(logError);
+    }
+
     else {
       setState(() {
-        isLoading = false;
-        logError = passwordDoesNotMatches;
-        confirmPasswordError = passwordDoesNotMatches;
+        isLoading = true;
       });
-      Fluttertoast.showToast(
-        msg: logError,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-      );
+      if (password == confirmPassword) {
+        //reset password for current user
+        await put(Uri.parse(
+            "$usersData"),
+            headers: {
+              "content-type": "application/json",
+              "accept": "application/json",
+            },
+            body: jsonEncode({
+              "userId": widget.currentUser["userId"],
+              "fullName": widget.currentUser["fullName"],
+              "username": widget.currentUser["username"],
+              "password": confirmPassword,
+              "companyName": widget.currentUser["companyName"],
+              "profilePic": widget.currentUser["profilePic"],
+              "accountStatus":"activate"
+
+            })
+        ).then((result) =>
+        {
+          if(result.statusCode == 200) {
+            setState(() {
+              isLoading = false;
+              logError=passwordUpdated;
+            }),
+            callToast(logError),
+            Navigator.pushAndRemoveUntil(
+                context, MaterialPageRoute(
+                builder: (context) => SignIn()),
+                ModalRoute.withName("/signin")
+            )
+          }else{
+            setState(() {
+              isLoading = false;
+              logError = apiError;
+            }),
+            callToast(logError)
+          }
+        });
+      }
+      else {
+        setState(() {
+          isLoading = false;
+          logError = passwordDoesNotMatches;
+          confirmPasswordError = passwordDoesNotMatches;
+        });
+        callToast(logError);
+      }
     }
   }
 }

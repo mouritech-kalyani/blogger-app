@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:bloggers/pages/Forgot%20Password/resetpassword.dart';
-import 'package:bloggers/utils/apis/allapis.dart';
-import 'package:bloggers/utils/messages/message.dart';
-import 'package:bloggers/utils/styles/fonts/fonts.dart';
-import 'package:bloggers/utils/styles/sizes/sizes.dart';
+import 'package:bloggers/utils/apis.dart';
+import 'package:bloggers/utils/local.dart';
+import 'package:bloggers/utils/styles/fonts.dart';
+import 'package:bloggers/utils/styles/sizes.dart';
+import 'package:bloggers/utils/validatefields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -85,14 +85,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 ),
                                 keyboardType: TextInputType.emailAddress,
                                 onChanged: (txt){
-                                  if(!emailValid.hasMatch(txt)){
-                                    setState(() {
-                                      emailError='$validateError';
-                                    });
-                                  }else{setState(() {
-                                    emailError='';
-                                    email=txt;
-                                  });}
+                                  validateEmailField(txt);
                                 },
                               ),
                               //show email error if it is invalid
@@ -103,24 +96,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 RaisedButton(
                                     onPressed: (){
                                       //if form error the show on toast
-                                      if(email == '' ){
-                                        setState(() {
-                                          emailError="$requiredCurrentField";
-                                        });
-                                        Fluttertoast.showToast(
-                                          msg: emailError,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                        );
-                                      }
-                                      else {
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-                                        searchEmail();
-                                      }
-
+                                      searchEmail();
                                     },
                                       textColor: Colors.white,
                                       padding: const EdgeInsets.all(0.0),
@@ -161,44 +137,65 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       ),
     );
   }
-  searchEmail()async{
-    if(emailError.length <1){
-      //Check username & password is correct or not
-      await post(Uri.parse(
-          "$checkEmailApi"),
-          headers: {
-            "content-type": "application/json",
-            "accept": "application/json",
-          },
-          body: jsonEncode({
-            "username": email
-          })
-      ).then((result) =>{
-        if(result.body != '') {
-          setState((){
-            currentUser=jsonDecode(result.body);
-          }),
-          Navigator.pushAndRemoveUntil(
-              context, MaterialPageRoute(
-              builder: (context) => ResetPassword(currentUser:currentUser)),
-              ModalRoute.withName("/resetpassword")
-          )
-        }
-        else{
-
-          setState(() {
-            isLoading = false;
-            logError = "$emailNotFound";
-            emailError="$emailNotFound";
-          }),
-          Fluttertoast.showToast(
-            msg: logError,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-          )
-        }
+  validateEmailField(txt){
+    String emailValidate = validateFields(txt, staticEmail);
+    if(emailValidate == validateError){
+      setState(() {
+        emailError = emailValidate;
       });
     }
+    else{
+      setState(() {
+        email = emailValidate;
+        emailError = '';
+      });
+    }
+  }
+  searchEmail()async{
+    if(email == '' ){
+      setState(() {
+        emailError="$requiredCurrentField";
+      });
+      callToast(emailError);
+    }
+    else {
+      setState(() {
+        isLoading = true;
+      });
+      if(emailError.length <1){
+        //Check username & password is correct or not
+        await post(Uri.parse(
+            "$checkEmailApi"),
+            headers: {
+              "content-type": "application/json",
+              "accept": "application/json",
+            },
+            body: jsonEncode({
+              "username": email
+            })
+        ).then((result) =>{
+          if(result.body != '') {
+            setState((){
+              currentUser=jsonDecode(result.body);
+            }),
+            Navigator.pushAndRemoveUntil(
+                context, MaterialPageRoute(
+                builder: (context) => ResetPassword(currentUser:currentUser)),
+                ModalRoute.withName("/resetpassword")
+            )
+          }
+          else{
+
+            setState(() {
+              isLoading = false;
+              logError = "$emailNotFound";
+              emailError="$emailNotFound";
+            }),
+            callToast(logError)
+          }
+        });
+      }
+    }
+
   }
 }

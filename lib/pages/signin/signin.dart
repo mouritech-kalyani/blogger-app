@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:bloggers/pages/dashboard/dashboard.dart';
-import 'package:bloggers/utils/apis/allapis.dart';
-import 'package:bloggers/utils/messages/message.dart';
-import 'package:bloggers/utils/styles/fonts/fonts.dart';
-import 'package:bloggers/utils/styles/sizes/sizes.dart';
+import 'package:bloggers/utils/apis.dart';
+import 'package:bloggers/utils/local.dart';
+import 'package:bloggers/utils/styles/fonts.dart';
+import 'package:bloggers/utils/styles/sizes.dart';
+import 'package:bloggers/utils/validatefields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 
 class SignIn extends StatefulWidget {
@@ -23,7 +23,6 @@ class _SignInState extends State<SignIn> {
   List allBlogs=[];
   String email='';
   String password='';
-  RegExp emailValid = RegExp(emailRegEx);
   String emailError='';
   String passwordError='';
   String logError='';
@@ -91,14 +90,7 @@ class _SignInState extends State<SignIn> {
                                 ),
                                 keyboardType: TextInputType.emailAddress,
                                 onChanged: (txt){
-                                if(!emailValid.hasMatch(txt)){
-                                  setState(() {
-                                    emailError='$validateError';
-                                  });
-                                }else{setState(() {
-                                  emailError='';
-                                  email=txt;
-                                });}
+                                  validateEmailField(txt);
                                 },
                               ),
                               //show email error if it is invalid
@@ -133,17 +125,7 @@ class _SignInState extends State<SignIn> {
                                 ),
                                 obscureText: !this._showPassword,
                                 onChanged: (txt){
-                                  if(txt.length !=8){
-                                    setState(() {
-                                      passwordError="$validatePassword";
-                                    });
-                                  }else{
-                                    setState(() {
-                                      password=txt;
-                                      passwordError='';
-                                    });
-                                    FocusScope.of(context).requestFocus(FocusNode());
-                                  }
+                                  validatePasswordField(txt);
                                 },
                               ),
                               //show password error if it is invalid
@@ -172,34 +154,7 @@ class _SignInState extends State<SignIn> {
                                 child: isLoading? SpinKitFadingCircle(color: Color(0xffd81b60),size: radiusCircle,) :
                                 RaisedButton(
                                   onPressed: () {
-
-                                   //if form error the show on toast
-                                  if(email == '' && password == ''){
-                                    setState(() {
-                                      logError="$requiredField";
-                                      emailError="$requiredCurrentField";
-                                      passwordError="$requiredCurrentField";
-                                    });
-                                    Fluttertoast.showToast(
-                                      msg: logError,
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 1,
-                                    );
-                                  }else if(email.isEmpty || password.isEmpty){
-                                    if(email.isEmpty){
-                                      setState(() {
-                                        emailError="$requiredCurrentField";
-                                      });
-                                    }else{
-                                      setState(() {
-                                        passwordError="$requiredCurrentField";
-                                      });
-                                    }
-                                  }
-                                  else {
                                     signInFunction();
-                                  }
                                   },
                                   textColor: Colors.white,
                                   padding: const EdgeInsets.all(0.0),
@@ -272,56 +227,102 @@ class _SignInState extends State<SignIn> {
       ),
     );
   }
-  signInFunction()async{
-    if(passwordError.length <1){
+  validateEmailField(txt){
+     String emailValidate = validateFields(txt, staticEmail);
+     if(emailValidate == validateError){
+       setState(() {
+         emailError = emailValidate;
+       });
+     }
+     else{
+       setState(() {
+         email = emailValidate;
+         emailError = '';
+       });
+     }
+  }
+  validatePasswordField(txt){
+    String passwordValidate = validateFields(txt, staticPassword);
+    if(passwordValidate == validatePassword){
       setState(() {
-        isLoading = true;
+        passwordError = passwordValidate;
       });
-      //Check username & password is correct or not
-      await post(Uri.parse(
-          "$signInAPi"),
-          headers: {
-            "content-type": "application/json",
-            "accept": "application/json",
-          },
-          body: jsonEncode({
-            "username": email,
-            "password":password,
+    }
+    else{
+      setState(() {
+        password = passwordValidate;
+        passwordError = '';
+      });
+    }
+  }
+  signInFunction()async{
 
-          })
-      ).then((result) =>{
-        if(result.body != 'false') {
-          setState((){
-            currentUser=jsonDecode(result.body);
-          }),
-          currentUser.forEach((e) => {
-            setState(()  {
-              userId=e["userId"];
-              username=e["username"];
-              password=e["password"];
+    //if form error the show on toast
+    if(email == '' && password == ''){
+      setState(() {
+        logError="$requiredField";
+        emailError="$requiredCurrentField";
+        passwordError="$requiredCurrentField";
+      });
+      //toast for empty fields
+      callToast(logError);
+    }else if(email.isEmpty || password.isEmpty){
+      if(email.isEmpty){
+        setState(() {
+          emailError="$requiredCurrentField";
+        });
+      }else{
+        setState(() {
+          passwordError="$requiredCurrentField";
+        });
+      }
+    }
+    else {
+      if(passwordError.length <1 && emailError == ''){
+        setState(() {
+          isLoading = true;
+        });
+        //Check username & password is correct or not
+        await post(Uri.parse(
+            "$signInAPi"),
+            headers: {
+              "content-type": "application/json",
+              "accept": "application/json",
+            },
+            body: jsonEncode({
+              "username": email,
+              "password":password,
+
             })
-          }),
-          setUserSession(),
-          Navigator.pushAndRemoveUntil(
-              context, MaterialPageRoute(
-              builder: (context) => Dashboard()),
-              ModalRoute.withName("/dashboard")
-          )
-        }
-        else{
+        ).then((result) =>{
+          if(result.body != 'false') {
+            setState((){
+              currentUser=jsonDecode(result.body);
+            }),
+            currentUser.forEach((e) => {
+              setState(()  {
+                userId=e["userId"];
+                username=e["username"];
+                password=e["password"];
+              })
+            }),
+            setUserSession(),
+            Navigator.pushAndRemoveUntil(
+                context, MaterialPageRoute(
+                builder: (context) => Dashboard()),
+                ModalRoute.withName("/dashboard")
+            )
+          }
+          else{
 
-          setState(() {
-            isLoading = false;
-            logError = "$invalidLogin";
-          }),
-          Fluttertoast.showToast(
-          msg: logError,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          )
-        }
-      });
+            setState(() {
+              isLoading = false;
+              logError = "$invalidLogin";
+            }),
+            callToast(logError)
+          }
+        });
+      }
     }
   }
 

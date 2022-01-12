@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:bloggers/pages/signin/signin.dart';
-import 'package:bloggers/utils/apis/allapis.dart';
-import 'package:bloggers/utils/messages/message.dart';
-import 'package:bloggers/utils/styles/fonts/fonts.dart';
-import 'package:bloggers/utils/styles/sizes/sizes.dart';
+import 'package:bloggers/utils/apis.dart';
+import 'package:bloggers/utils/local.dart';
+import 'package:bloggers/utils/styles/fonts.dart';
+import 'package:bloggers/utils/styles/sizes.dart';
+import 'package:bloggers/utils/validatefields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -79,14 +80,7 @@ class _ActivateAccountState extends State<ActivateAccount> {
                                 ),
                                 keyboardType: TextInputType.emailAddress,
                                 onChanged: (txt){
-                                  if(!emailValid.hasMatch(txt)){
-                                    setState(() {
-                                      emailError='$validateError';
-                                    });
-                                  }else{setState(() {
-                                    emailError='';
-                                    email=txt;
-                                  });}
+                                  validateEmailField(txt);
                                 },
                               ),
                               //show email error if it is invalid
@@ -97,20 +91,7 @@ class _ActivateAccountState extends State<ActivateAccount> {
                                 RaisedButton(
                                     onPressed: (){
                                       //if form error the show on toast
-                                      if(email == '' ){
-                                        setState(() {
-                                          emailError="$requiredCurrentField";
-                                        });
-                                        Fluttertoast.showToast(
-                                          msg: emailError,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                        );
-                                      }
-                                      else {
-                                        searchEmail();
-                                      }
+                                      searchEmail();
 
                                     },
                                   textColor: Colors.white,
@@ -152,7 +133,33 @@ class _ActivateAccountState extends State<ActivateAccount> {
       ),
     );
   }
+  validateEmailField(txt){
+    String emailValidate = validateFields(txt, staticEmail);
+    if(emailValidate == validateError){
+      setState(() {
+        emailError = emailValidate;
+      });
+    }
+    else{
+      setState(() {
+        email = emailValidate;
+        emailError = '';
+      });
+    }
+  }
   searchEmail()async{
+    if(email == '' ){
+      setState(() {
+        emailError="$requiredCurrentField";
+      });
+      Fluttertoast.showToast(
+        msg: emailError,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+      );
+    }
+    else {
       if(emailError.length <1){
         setState(() {
           isLoading = true;
@@ -174,70 +181,55 @@ class _ActivateAccountState extends State<ActivateAccount> {
             }),
 
             //Activate account here
-      //reset password for current user
-      await put(Uri.parse(
-      "$usersData"),
-      headers: {
-      "content-type": "application/json",
-      "accept": "application/json",
-      },
-      body: jsonEncode({
-      "userId": currentUser["userId"],
-      "fullName": currentUser["fullName"],
-      "username": currentUser["username"],
-      "password": currentUser["password"],
-      "companyName": currentUser["companyName"],
-      "profilePic": currentUser["profilePic"],
-      "accountStatus":"activate"
+            //reset password for current user
+            await put(Uri.parse(
+                "$usersData"),
+                headers: {
+                  "content-type": "application/json",
+                  "accept": "application/json",
+                },
+                body: jsonEncode({
+                  "userId": currentUser["userId"],
+                  "fullName": currentUser["fullName"],
+                  "username": currentUser["username"],
+                  "password": currentUser["password"],
+                  "companyName": currentUser["companyName"],
+                  "profilePic": currentUser["profilePic"],
+                  "accountStatus":"activate"
 
-      })
-      ).then((result) =>
-      {
-      if(result.statusCode == 200) {
-      setState(() {
-      isLoading = false;
-      logError = activated;
-      }),
-      Fluttertoast.showToast(
-      msg: logError,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      ),
-      Navigator.pushAndRemoveUntil(
-      context, MaterialPageRoute(
-      builder: (context) => SignIn()),
-      ModalRoute.withName("/signin")
-      )
-      }else{
-      setState(() {
-      isLoading = false;
-      logError = apiError;
-      }),
-      Fluttertoast.showToast(
-      msg: logError,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      )
-      }
-      })
+                })
+            ).then((result) =>
+            {
+              if(result.statusCode == 200) {
+                setState(() {
+                  isLoading = false;
+                  logError = activated;
+                }),
+                callToast(logError),
+                Navigator.pushAndRemoveUntil(
+                    context, MaterialPageRoute(
+                    builder: (context) => SignIn()),
+                    ModalRoute.withName("/signin")
+                )
+              }else{
+                setState(() {
+                  isLoading = false;
+                  logError = apiError;
+                }),
+                callToast(logError),
+              }
+            })
           }
           else{
-
             setState(() {
               isLoading = false;
               logError = "$emailNotFound";
               emailError="$emailNotFound";
             }),
-            Fluttertoast.showToast(
-              msg: logError,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-            )
+            callToast(logError),
           }
         });
       }
+    }
   }
 }

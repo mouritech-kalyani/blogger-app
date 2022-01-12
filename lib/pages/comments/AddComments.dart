@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:bloggers/utils/apis/allapis.dart';
-import 'package:bloggers/utils/messages/message.dart';
-import 'package:bloggers/utils/styles/fonts/fonts.dart';
-import 'package:bloggers/utils/styles/icons/icons.dart';
-import 'package:bloggers/utils/styles/sizes/sizes.dart';
+import 'package:bloggers/utils/apis.dart';
+import 'package:bloggers/utils/local.dart';
+import 'package:bloggers/utils/styles/fonts.dart';
+import 'package:bloggers/utils/styles/icons.dart';
+import 'package:bloggers/utils/styles/sizes.dart';
+import 'package:bloggers/utils/validatefields.dart';
 import 'package:flutter_session/flutter_session.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -109,16 +109,7 @@ class _AddCommentsState extends State<AddComments> {
                     minLines: 2,
                     maxLines: 40,
                     onChanged: (e){
-                      if(e.length <4){
-                        setState(() {
-                          commentError="$commentStatus";
-                        });
-                      }else{
-                        setState(() {
-                          commentDescription=e;
-                          commentError='';
-                        });
-                      }
+                      validateCommentField(e);
                     },
                   ),
                   SizedBox(height: normalFontSize,),
@@ -150,15 +141,7 @@ class _AddCommentsState extends State<AddComments> {
                         ),
                       ),
                     onPressed: (){
-                      commentError == '' ?
-                      addCommentFunction(blogId,userId)
-                      :
-                      Fluttertoast.showToast(
-                        msg: commentError,
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.CENTER,
-                        timeInSecForIosWeb: 1,
-                      );
+                      checkComments();
                   },
                   )),
 
@@ -248,16 +231,7 @@ class _AddCommentsState extends State<AddComments> {
                    minLines: 2,
                    maxLines: 40,
                    onChanged: (e){
-                     if(e.length <4){
-                       setState(() {
-                         commentError="$commentStatus";
-                       });
-                     }else{
-                       setState(() {
-                         commentDescription=e;
-                         commentError='';
-                       });
-                     }
+                     validateCommentField(e);
                    },
                  ),
                ),
@@ -301,6 +275,26 @@ class _AddCommentsState extends State<AddComments> {
 
     );
   }
+  validateCommentField(txt){
+    String commentValidate = validateFields(txt, staticComment);
+    if(commentValidate == validatePassword){
+      setState(() {
+        commentError = commentValidate;
+      });
+    }
+    else{
+      setState(() {
+        commentDescription = commentValidate;
+        commentError = '';
+      });
+    }
+  }
+  checkComments(){
+    commentError == '' ?
+    addCommentFunction(blogId,userId)
+        :
+    callToast(commentError);
+  }
   addCommentFunction(blogId,userId)async{
     setState(() {
       isLoadingComment=true;
@@ -336,12 +330,7 @@ class _AddCommentsState extends State<AddComments> {
           setState(() {
           isLoadingComment=false;
           }),
-            Fluttertoast.showToast(
-              msg: "$commentUpdated",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-            ).then((value) =>
+          callToast(commentUpdated).then((value) =>
                 Navigator.pop(context)
             )
           });

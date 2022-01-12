@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'package:bloggers/utils/apis/allapis.dart';
-import 'package:bloggers/utils/messages/message.dart';
-import 'package:bloggers/utils/styles/fonts/fonts.dart';
-import 'package:bloggers/utils/styles/sizes/sizes.dart';
+import 'package:bloggers/utils/apis.dart';
+import 'package:bloggers/utils/local.dart';
+import 'package:bloggers/utils/styles/fonts.dart';
+import 'package:bloggers/utils/styles/sizes.dart';
+import 'package:bloggers/utils/validatefields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import '../dashboard/dashboard.dart';
 
@@ -26,7 +26,6 @@ class _SignUpState extends State<SignUp> {
   String companyName='';
   String password='';
   String email='';
-  RegExp emailValid = RegExp(emailRegEx);
   String emailError='';
   String fnameError='';
   String compError='';
@@ -91,16 +90,7 @@ class _SignUpState extends State<SignUp> {
                                 ),
                                 keyboardType: TextInputType.text,
                                 onChanged: (txt){
-                                if(txt.length <3){
-                                  setState(() {
-                                    fnameError=validFullName;
-                                  });
-                                }else{
-                                  setState(() {
-                                    fnameError="";
-                                    fullName=txt;
-                                  });
-                                }
+                                validateFullName(txt);
                                 },
                               ),
                               Text('$fnameError',style: TextStyle(color: Color(0xffff4081),fontSize: 15,fontFamily: fontFamily)),
@@ -125,16 +115,7 @@ class _SignUpState extends State<SignUp> {
                                 ),
                                 keyboardType: TextInputType.text,
                                 onChanged: (txt){
-                                if(txt.length <3){
-                                  setState(() {
-                                    compError=validCompanyName;
-                                  });
-                                }else{
-                                  setState(() {
-                                    compError="";
-                                    companyName=txt;
-                                  });
-                                }
+                                validateCompanyName(txt);
                                 },
                               ),
                               Text('$compError',style: TextStyle(color: Color(0xffff4081),fontSize: 15,fontFamily: fontFamily)),
@@ -159,14 +140,7 @@ class _SignUpState extends State<SignUp> {
                                 ),
                                 keyboardType: TextInputType.emailAddress,
                                 onChanged: (txt){
-                                  if(!emailValid.hasMatch(txt)){
-                                    setState(() {
-                                      emailError='$validateError';
-                                    });
-                                  }else{setState(() {
-                                    emailError='';
-                                    email=txt;
-                                  });}
+                                  validateEmailField(txt);
                                 },
                               ),
                               //show email error if it is invalid
@@ -202,17 +176,7 @@ class _SignUpState extends State<SignUp> {
                                   ),
                                 ),
                                 onChanged: (txt){
-                                  if(txt.length !=8){
-                                    setState(() {
-                                      passwordError="$validatePassword";
-                                    });
-                                  }else{
-                                    setState(() {
-                                      password=txt;
-                                      passwordError='';
-                                    });
-                                    FocusScope.of(context).requestFocus(FocusNode());
-                                  }
+                                  validatePasswordField(txt);
                                 },
                               ),
                               Text('$passwordError',style: TextStyle(color: Color(0xffff4081),fontSize: 15,fontFamily: fontFamily)),
@@ -222,45 +186,8 @@ class _SignUpState extends State<SignUp> {
                                 RaisedButton(
                                     onPressed: ()=>
                                     {
-                                      if(fullName.isEmpty && companyName.isEmpty &&
-                                          email.isEmpty && password.isEmpty){
-                                        setState(() {
-                                          logError = '$requiredField';
-                                          fnameError='$requiredCurrentField';
-                                          compError='$requiredCurrentField';
-                                          emailError='$requiredCurrentField';
-                                          passwordError='$requiredCurrentField';
-                                        }),
-                                        Fluttertoast.showToast(
-                                          msg: logError,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                        )
-                                      }else if(fullName.isEmpty || companyName.isEmpty ||
-                                      email.isEmpty || password.isEmpty){
-                                        if(fullName.isEmpty){
-                                          setState(() {
-                                            fnameError='$requiredCurrentField';
-                                          }),
-                                        }else if(companyName.isEmpty){
-                                          setState(() {
-                                            compError='$requiredCurrentField';
-                                          }),
-                                        }else if(email.isEmpty){
-                                          setState(() {
-                                            emailError='$requiredCurrentField';
-                                          }),
-                                        }else if(password.isEmpty){
-                                          setState(() {
-                                            passwordError='$requiredCurrentField';
-                                          }),
-                                        }
-                                      } else
-                                        {
-                                           signUpFunction()
-                                          }
-                                        },
+                                      signUpFunction()
+                                    },
                                     // logInSuccess(context);
                                     // Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard(username:username,password:password)));
                                   textColor: Colors.black,
@@ -321,8 +248,94 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
-  signUpFunction()async{
-    if(passwordError.length <1 && emailError == '' && compError == '' && fnameError == ''){
+  validateFullName(txt){
+    String fullNameValidate = validateFields(txt, staticFullName);
+    if(fullNameValidate == validFullName){
+      setState(() {
+        fnameError = fullNameValidate;
+      });
+    }else{
+      setState(() {
+        fullName = fullNameValidate;
+        fnameError="";
+      });
+    }
+  }
+  validateCompanyName(txt){
+    String companyDataValidate = validateFields(txt, staticCompanyName);
+    if(companyDataValidate == validCompanyName){
+      setState(() {
+        compError = companyDataValidate;
+      });
+    }else{
+      setState(() {
+        companyName = companyDataValidate;
+        compError="";
+      });
+    }
+  }
+  validateEmailField(txt){
+    String emailValidate = validateFields(txt, staticEmail);
+    if(emailValidate == validateError){
+      setState(() {
+        emailError = emailValidate;
+      });
+    }
+    else{
+      setState(() {
+        email = emailValidate;
+        emailError = '';
+      });
+    }
+  }
+  validatePasswordField(txt){
+    String passwordValidate = validateFields(txt, staticPassword);
+    if(passwordValidate == validatePassword){
+      setState(() {
+        passwordError = passwordValidate;
+      });
+    }
+    else{
+      setState(() {
+        password = passwordValidate;
+        passwordError = '';
+      });
+    }
+  }
+  signUpFunction()async {
+    if(fullName.isEmpty && companyName.isEmpty &&
+        email.isEmpty && password.isEmpty){
+      setState(() {
+        logError = '$requiredField';
+        fnameError='$requiredCurrentField';
+        compError='$requiredCurrentField';
+        emailError='$requiredCurrentField';
+        passwordError='$requiredCurrentField';
+      });
+    callToast(logError);
+    }else if(fullName.isEmpty || companyName.isEmpty ||
+      email.isEmpty || password.isEmpty){
+      if(fullName.isEmpty){
+      setState(() {
+      fnameError='$requiredCurrentField';
+      });
+    }else if(companyName.isEmpty){
+      setState(() {
+      compError='$requiredCurrentField';
+      });
+    }else if(email.isEmpty){
+      setState(() {
+      emailError='$requiredCurrentField';
+      });
+    }else if(password.isEmpty){
+      setState(() {
+      passwordError='$requiredCurrentField';
+      });
+    }
+    }
+    else{
+    if (passwordError.length < 1 && emailError == '' && compError == '' &&
+        fnameError == '') {
       setState(() {
         isLoading = true;
       });
@@ -335,46 +348,39 @@ class _SignUpState extends State<SignUp> {
           body: jsonEncode({
             "fullName": fullName,
             "username": email,
-            "password":password,
+            "password": password,
             "companyName": companyName,
-            "accountStatus":"activate"
+            "accountStatus": "activate"
           })
-      ).then((result) => {
+      ).then((result) =>
+      {
 
         if(result.body != ""){
-          setState((){
-            currentData=jsonDecode(result.body);
-            isLoading = false;
-          }),
-          userId=currentData["userId"],
-           setUserSession(),
-          Fluttertoast.showToast(
-            msg: "$registrationSuccess",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-          ).then((value) =>
-
-                Navigator.pushAndRemoveUntil(
-                    context, MaterialPageRoute(
-                    builder: (context) => Dashboard()),
-                    ModalRoute.withName("/dashboard")
-                ))
-        }
-        else{
           setState(() {
+            currentData = jsonDecode(result.body);
             isLoading = false;
-            logError = "$emailPresent";
           }),
-          Fluttertoast.showToast(
-          msg: logError,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          )
+          userId = currentData["userId"],
+          setUserSession(),
+          callToast(registrationSuccess).then((value) =>
+
+              Navigator.pushAndRemoveUntil(
+                  context, MaterialPageRoute(
+                  builder: (context) => Dashboard()),
+                  ModalRoute.withName("/dashboard")
+              ))
         }
+        else
+          {
+            setState(() {
+              isLoading = false;
+              logError = "$emailPresent";
+            }),
+            callToast(logError)
+          }
       });
     }
+  }
 
   }
   //put the userid into session to check whether user is logged in or not

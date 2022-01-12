@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:bloggers/pages/profile/myblogs/myblogs.dart';
-import 'package:bloggers/utils/messages/message.dart';
-import 'package:bloggers/utils/apis/allapis.dart';
-import 'package:bloggers/utils/styles/fonts/fonts.dart';
-import 'package:bloggers/utils/styles/sizes/sizes.dart';
+import 'package:bloggers/utils/local.dart';
+import 'package:bloggers/utils/apis.dart';
+import 'package:bloggers/utils/styles/fonts.dart';
+import 'package:bloggers/utils/styles/sizes.dart';
+import 'package:bloggers/utils/validatefields.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:flutter_summernote/flutter_summernote.dart';
 // import 'package:html_editor_enhanced/html_editor.dart';
@@ -137,12 +137,7 @@ class _AddBlogState extends State<AddBlog> {
               blogError = blogErrorMessage;
               isLoading = false;
             });
-            Fluttertoast.showToast(
-              msg: "$blogError",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-            );
+            callToast(blogError);
           }
           else{
           DateTime now = DateTime.now();
@@ -168,12 +163,7 @@ class _AddBlogState extends State<AddBlog> {
           ).then((result) =>
           {
             //Show toast message for edit blog
-            Fluttertoast.showToast(
-              msg: "$blogUpdted",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-            ).then((value) =>
+          callToast(blogUpdted).then((value) =>
             {
               //Navigate to my blogs page
               Navigator.pop(context),
@@ -197,12 +187,7 @@ class _AddBlogState extends State<AddBlog> {
               blogError = blogErrorMessage;
               isLoading = false;
             });
-            Fluttertoast.showToast(
-              msg: "$blogError",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-            );
+            callToast(blogError);
           }
           else {
             DateTime now = DateTime.now();
@@ -227,12 +212,7 @@ class _AddBlogState extends State<AddBlog> {
             {
               //Show toast message for add blog
 
-              Fluttertoast.showToast(
-                msg: "$blogAdded",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 1,
-              ).then((value) =>
+            callToast(blogAdded).then((value) =>
 
               {
                 //Navigate to my blogs page
