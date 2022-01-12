@@ -5,11 +5,11 @@ import 'package:bloggers/utils/local.dart';
 import 'package:bloggers/utils/styles/fonts.dart';
 import 'package:bloggers/utils/styles/icons.dart';
 import 'package:bloggers/utils/styles/sizes.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../dashboard/dashboard.dart';
 
 class People extends StatefulWidget {
@@ -24,6 +24,8 @@ class _PeopleState extends State<People> {
   bool isLoading=true;
   var likes;
   bool isBlogLike=false;
+  String currentUser='';
+  late SharedPreferences loginData;
   @override
   void initState() {
     getAllPeople();
@@ -31,9 +33,10 @@ class _PeopleState extends State<People> {
   }
   getAllPeople()async{
     //By passing logged in userId take all un follow users
-
-    dynamic sessionUid= await FlutterSession().get("userId");
-    await get(Uri.parse("$peopleApi/$sessionUid"),
+    loginData = await SharedPreferences.getInstance();
+    currentUser = loginData.getString('userId');
+    // dynamic sessionUid= await FlutterSession().get("userId");
+    await get(Uri.parse("$peopleApi/$currentUser"),
         headers: {
           "content-type": "application/json",
           "accept": "application/json",
@@ -148,7 +151,9 @@ class _PeopleState extends State<People> {
       isLoading=true;
     });
     //if click on follow button then simply add the user into logged in user list
-    dynamic sessionUid= await FlutterSession().get("userId");
+    loginData = await SharedPreferences.getInstance();
+    currentUser = loginData.getString('userId');
+    // dynamic sessionUid= await FlutterSession().get("userId");
     await post(Uri.parse(
         "$doFollowApi"),
         headers: {
@@ -157,7 +162,7 @@ class _PeopleState extends State<People> {
         },
         body: jsonEncode({
           "user1": {
-            "userId": sessionUid
+            "userId": currentUser
           },
           "user2": {
             "userId": id

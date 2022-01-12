@@ -40,6 +40,7 @@ dependencies:
   flutter_html: ^0.8.2
 #  html_editor_enhanced: ^1.7.0
   flutter_summernote: ^1.0.0
+  shared_preferences: ^0.5.12+4
 
 
 dev_dependencies:

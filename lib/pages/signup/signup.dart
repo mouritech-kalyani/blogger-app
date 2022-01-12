@@ -5,9 +5,9 @@ import 'package:bloggers/utils/styles/fonts.dart';
 import 'package:bloggers/utils/styles/sizes.dart';
 import 'package:bloggers/utils/validatefields.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../dashboard/dashboard.dart';
 
 class SignUp extends StatefulWidget {
@@ -303,6 +303,8 @@ class _SignUpState extends State<SignUp> {
     }
   }
   signUpFunction()async {
+    final SharedPreferences sharedpreference = await SharedPreferences.getInstance();
+
     if(fullName.isEmpty && companyName.isEmpty &&
         email.isEmpty && password.isEmpty){
       setState(() {
@@ -361,7 +363,7 @@ class _SignUpState extends State<SignUp> {
             isLoading = false;
           }),
           userId = currentData["userId"],
-          setUserSession(),
+          sharedpreference.setString('userId', userId.toString()),
           callToast(registrationSuccess).then((value) =>
 
               Navigator.pushAndRemoveUntil(
@@ -381,12 +383,5 @@ class _SignUpState extends State<SignUp> {
       });
     }
   }
-
-  }
-  //put the userid into session to check whether user is logged in or not
-  setUserSession()async{
-    var session = FlutterSession();
-    await session.set("userId", userId);
-
   }
 }

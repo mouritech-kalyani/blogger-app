@@ -7,7 +7,7 @@ import 'package:bloggers/utils/styles/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
-import 'package:flutter_session/flutter_session.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../comments/AddComments.dart';
 import '../../dashboard/dashboard.dart';
 import 'package:share/share.dart';
@@ -31,8 +31,11 @@ class _AllBlogsState extends State<AllBlogs> {
     super.initState();
   }
   getWholeBlogs()async{
-    dynamic sessionUid= await FlutterSession().get("userId");
-    await get(Uri.parse("$allBlogsApi/$sessionUid"),
+    String currentUser='';
+    SharedPreferences loginData;
+    loginData = await SharedPreferences.getInstance();
+    currentUser = loginData.getString('userId');
+    await get(Uri.parse("$allBlogsApi/$currentUser"),
         headers: {
         "content-type": "application/json",
         "accept": "application/json",

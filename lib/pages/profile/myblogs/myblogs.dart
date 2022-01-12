@@ -6,10 +6,10 @@ import 'package:bloggers/utils/styles/icons.dart';
 import 'package:bloggers/utils/styles/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 import 'package:share/share.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../comments/AddComments.dart';
 import '../../blogs/addblog/addblog.dart';
 
@@ -31,12 +31,16 @@ var likes;
     getMyBlogs();
   }
 getMyBlogs()async{
-  dynamic sessionUid= await FlutterSession().get("userId");
+  String currentUser='';
+  SharedPreferences loginData;
+  loginData = await SharedPreferences.getInstance();
+  currentUser = loginData.getString('userId');
+  // dynamic sessionUid= await FlutterSession().get("userId");
   setState(() {
-    userIdFromSession=sessionUid;
+    userIdFromSession=currentUser;
   });
   //By passing current user id get all blogs of current user
-  await get(Uri.parse("$usersData/$sessionUid"),
+  await get(Uri.parse("$usersData/$currentUser"),
       headers: {
       "content-type": "application/json",
       "accept": "application/json",

@@ -7,9 +7,9 @@ import 'package:bloggers/utils/styles/fonts.dart';
 import 'package:bloggers/utils/styles/sizes.dart';
 import 'package:bloggers/utils/validatefields.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -30,6 +30,7 @@ class _SignInState extends State<SignIn> {
   String username="";
   bool _showPassword = false;
   bool isLoading=false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -256,7 +257,7 @@ class _SignInState extends State<SignIn> {
     }
   }
   signInFunction()async{
-
+    final SharedPreferences sharedpreference = await SharedPreferences.getInstance();
     //if form error the show on toast
     if(email == '' && password == ''){
       setState(() {
@@ -294,7 +295,7 @@ class _SignInState extends State<SignIn> {
               "password":password,
 
             })
-        ).then((result) =>{
+        ).then((result) async =>{
           if(result.body != 'false') {
             setState((){
               currentUser=jsonDecode(result.body);
@@ -306,7 +307,7 @@ class _SignInState extends State<SignIn> {
                 password=e["password"];
               })
             }),
-            setUserSession(),
+            sharedpreference.setString('userId', userId.toString()),
             Navigator.pushAndRemoveUntil(
                 context, MaterialPageRoute(
                 builder: (context) => Dashboard()),
@@ -324,13 +325,6 @@ class _SignInState extends State<SignIn> {
         });
       }
     }
-  }
-
-  //put the userid into session to check whether user is logged in or not
-  setUserSession()async{
-  var session = FlutterSession();
-  await session.set("userId", userId);
-
   }
 
 }

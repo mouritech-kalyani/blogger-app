@@ -6,11 +6,11 @@ import 'package:bloggers/utils/styles/fonts.dart';
 import 'package:bloggers/utils/styles/icons.dart';
 import 'package:bloggers/utils/styles/sizes.dart';
 import 'package:bloggers/utils/validatefields.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddComments extends StatefulWidget {
   final blogId;
@@ -58,9 +58,12 @@ class _AddCommentsState extends State<AddComments> {
     }),
     }
     });
-    dynamic sessionUid= await FlutterSession().get("userId");
+    String currentUser='';
+    SharedPreferences loginData;
+    loginData = await SharedPreferences.getInstance();
+    currentUser = loginData.getString('userId');
     setState(() {
-      userId=sessionUid;
+      userId=currentUser;
     });
   }
   @override

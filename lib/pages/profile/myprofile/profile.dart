@@ -9,10 +9,10 @@ import 'package:bloggers/utils/styles/sizes.dart';
 import 'package:bloggers/utils/validatefields.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../dashboard/dashboard.dart';
 
 class MyProfile extends StatefulWidget {
@@ -42,6 +42,8 @@ class _MyProfileState extends State<MyProfile> {
   bool isProfileChange=false;
   String passwordError='';
   String formError = '';
+  String currentUserId='';
+  late SharedPreferences loginData;
   @override
   void initState() {
     getProfile();
@@ -49,9 +51,10 @@ class _MyProfileState extends State<MyProfile> {
   }
   //By passing userId get all personal details of the user
   getProfile()async{
-    dynamic sessionUid= await FlutterSession().get("userId");
+    loginData = await SharedPreferences.getInstance();
+    currentUserId = loginData.getString('userId');
     setState(() {
-      userId=sessionUid;
+      userId=currentUserId;
     });
    await get(Uri.parse(
        "$profileApi/$userId"),
@@ -72,9 +75,10 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   getAllUserData()async{
-    dynamic sessionUid= await FlutterSession().get("userId");
+    loginData = await SharedPreferences.getInstance();
+    currentUserId = loginData.getString('userId');
     setState(() {
-      userId=sessionUid;
+      userId=currentUserId;
     });
     //Get following count of logged in user
     await get(Uri.parse(
@@ -133,14 +137,17 @@ class _MyProfileState extends State<MyProfile> {
                     isLoading=true;
                   });
                   //Api to deactivate user account
-                  dynamic sessionUid= await FlutterSession().get("userId");
+                  String currentUser='';
+                  SharedPreferences loginData;
+                  loginData = await SharedPreferences.getInstance();
+                  currentUser = loginData.getString('userId');
                  await put(Uri.parse("$accountStatusApi"),
                  headers: {
                  "content-type": "application/json",
                  "accept": "application/json",
                  },
                  body: jsonEncode({
-                   "userId":sessionUid,
+                   "userId":currentUser,
                    "fullName":fullName,
                    "username":username,
                    "password":password,
@@ -162,13 +169,13 @@ class _MyProfileState extends State<MyProfile> {
 
                 // set up the AlertDialog
                 AlertDialog alert = AlertDialog(
-                  backgroundColor: Colors.black,
+                  backgroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(color: Colors.white, width: 1),
+                    side: BorderSide(color: Colors.black, width: 1),
                   ),
-                title: Text("Deactivate Account",style: TextStyle(color: Colors.white,fontFamily: fontFamily)),
-                content: Text("$deleteAccount",style: TextStyle(color: Colors.white,fontFamily: fontFamily)),
+                title: Text("Deactivate Account",style: TextStyle(color: Colors.black,fontFamily: fontFamily)),
+                content: Text("$deleteAccount",style: TextStyle(color: Colors.black,fontFamily: fontFamily)),
                 actions: [
                 cancelButton,
                 continueButton,
@@ -183,7 +190,10 @@ class _MyProfileState extends State<MyProfile> {
                 },
                 );
           }, icon: Icon(Icons.delete_rounded),color: Colors.white,iconSize: sizedBoxNormalHeight,),
-          IconButton(onPressed: (){
+          IconButton(onPressed: () async {
+            SharedPreferences loginData;
+            loginData = await SharedPreferences.getInstance();
+            loginData.remove('userId');
             Navigator.pushAndRemoveUntil(
             context, MaterialPageRoute(
             builder: (context) => SignIn()),
