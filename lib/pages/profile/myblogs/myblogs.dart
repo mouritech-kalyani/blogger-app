@@ -4,6 +4,7 @@ import 'package:bloggers/utils/local.dart';
 import 'package:bloggers/utils/styles/fonts.dart';
 import 'package:bloggers/utils/styles/icons.dart';
 import 'package:bloggers/utils/styles/sizes.dart';
+import 'package:bloggers/utils/validatefields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -138,7 +139,7 @@ getMyBlogs()async{
                                     SizedBox(width: 100,),
                                     Expanded(flex:5,child: Text('Comments',style: TextStyle(fontFamily: fontFamily,color: Colors.white,fontSize: fullNameSize),)),
                                     Expanded(flex:4,child: IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,color: Colors.white), onPressed: () {showComments(userBlogs[index]["blogId"]);},)),
-                                    Expanded(flex:2,child: IconButton(icon:Icon(Icons.share,size: sizedBoxNormalHeight,color: Colors.white),onPressed: (){Share.share(userBlogs[index]["description"]);},))
+                                    Expanded(flex:2,child: IconButton(icon:Icon(Icons.share,size: sizedBoxNormalHeight,color: Colors.white),onPressed: (){shareBlogs(userBlogs[index]["description"]);},))
                                ]
                               ),
                             ]

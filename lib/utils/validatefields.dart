@@ -1,5 +1,6 @@
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:share/share.dart';
+import 'package:html/parser.dart';
 import 'local.dart';
 String validData='';
 RegExp emailValid = RegExp(emailRegEx);
@@ -57,4 +58,10 @@ Future<bool?> callToast(String message){
     gravity: ToastGravity.CENTER,
     timeInSecForIosWeb: 1,
   ));
+}
+
+shareBlogs(txt){
+  final document = parse(txt);
+  final String parsedString = parse(document.body.text).documentElement.text;
+  Share.share(parsedString);
 }

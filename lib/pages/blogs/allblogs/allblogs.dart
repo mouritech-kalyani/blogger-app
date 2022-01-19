@@ -4,13 +4,13 @@ import 'package:bloggers/utils/local.dart';
 import 'package:bloggers/utils/styles/fonts.dart';
 import 'package:bloggers/utils/styles/icons.dart';
 import 'package:bloggers/utils/styles/sizes.dart';
+import 'package:bloggers/utils/validatefields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../comments/AddComments.dart';
 import '../../dashboard/dashboard.dart';
-import 'package:share/share.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class AllBlogs extends StatefulWidget {
@@ -24,6 +24,7 @@ class _AllBlogsState extends State<AllBlogs> {
   var allBlogs=[];
   bool isLoading=true;
   var likes;
+  var blogDescription='';
   bool isBlogLike=false;
   @override
   void initState() {
@@ -127,7 +128,7 @@ class _AllBlogsState extends State<AllBlogs> {
                                       SizedBox(width: 100,),
                                       Expanded(flex:5,child: Text('Comments',style: TextStyle(fontFamily: fontFamily,color: Colors.white,fontSize: fullNameSize),)),
                                       Expanded(flex:4,child: IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,color: Colors.white), onPressed: () {showComments(allBlogs[index]["blogId"]);},)),
-                                      Expanded(flex:2,child: IconButton(icon:Icon(Icons.share,size: sizedBoxNormalHeight,color: Colors.white),onPressed: (){Share.share(allBlogs[index]["description"]);},))
+                                      Expanded(flex:2,child: IconButton(icon:Icon(Icons.share,size: sizedBoxNormalHeight,color: Colors.white),onPressed: (){ shareBlogs(allBlogs[index]["description"]);},))
                                       ]
                                 )
                               ]
@@ -144,6 +145,7 @@ class _AllBlogsState extends State<AllBlogs> {
 
     );
   }
+
   blogLikeFunction(likes,description,blogId,userId,blogTime)async{
 
     setState(() {
