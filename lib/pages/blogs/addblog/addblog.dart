@@ -36,6 +36,7 @@ class _AddBlogState extends State<AddBlog> {
   bool isLoading=false;
   // final HtmlEditorController controller = HtmlEditorController();
   GlobalKey<FlutterSummernoteState> _keyEditor = GlobalKey();
+
   @override
   void initState() {
     super.initState();

@@ -125,7 +125,7 @@ class _AllBlogsState extends State<AllBlogs> {
                                           blogLikeFunction(allBlogs[index]["likes"],allBlogs[index]["description"],allBlogs[index]["blogId"],allBlogs[index]["user"]["userId"],allBlogs[index]["blogTime"]);
                                         },),
                                       ),
-                                      SizedBox(width: 100,),
+                                      SizedBox(width: 90,),
                                       Expanded(flex:5,child: Text('Comments',style: TextStyle(fontFamily: fontFamily,color: Colors.white,fontSize: fullNameSize),)),
                                       Expanded(flex:4,child: IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,color: Colors.white), onPressed: () {showComments(allBlogs[index]["blogId"]);},)),
                                       Expanded(flex:2,child: IconButton(icon:Icon(Icons.share,size: sizedBoxNormalHeight,color: Colors.white),onPressed: (){ shareBlogs(allBlogs[index]["description"]);},))

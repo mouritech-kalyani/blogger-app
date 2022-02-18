@@ -136,7 +136,7 @@ getMyBlogs()async{
                                   children:<Widget>[
                                     Expanded(flex:1,child: Text(userBlogs[index]["likes"].toString(),style: TextStyle(fontSize: blogTimeAndCompany,color: Colors.white))),
                                     Expanded(flex:3,child: IconButton(onPressed: null, icon: Icon(userBlogs[index]["likes"] == 0 ? Icons.favorite_outline_rounded : Icons.favorite,color: Color(0xffd81b60),size: sizedBoxNormalHeight,))),
-                                    SizedBox(width: 100,),
+                                    SizedBox(width: 90,),
                                     Expanded(flex:5,child: Text('Comments',style: TextStyle(fontFamily: fontFamily,color: Colors.white,fontSize: fullNameSize),)),
                                     Expanded(flex:4,child: IconButton(icon: Icon(Icons.comment,size: sizedBoxNormalHeight,color: Colors.white), onPressed: () {showComments(userBlogs[index]["blogId"]);},)),
                                     Expanded(flex:2,child: IconButton(icon:Icon(Icons.share,size: sizedBoxNormalHeight,color: Colors.white),onPressed: (){shareBlogs(userBlogs[index]["description"]);},))

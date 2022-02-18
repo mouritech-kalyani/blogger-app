@@ -102,9 +102,7 @@ class _PeopleState extends State<People> {
                                 )),
 
                                   Expanded(flex:4 , child: Text(allUsers[index]["companyName"].toString(),style: TextStyle(fontSize: 15,color:Colors.white,fontFamily: fontFamily))),
-                                  Expanded(
-                                    flex:4,
-                               child: RaisedButton(
+                                  RaisedButton(
                                     onPressed: () {  followUser(allUsers[index]["userId"]); },
                                  textColor: Colors.black,
                                  elevation: 0,
@@ -130,7 +128,6 @@ class _PeopleState extends State<People> {
                                    ),
                                  ),
                                   )
-                                  ),
                             // Divider( color: Colors.grey[800],),
                           ]
                       ),
